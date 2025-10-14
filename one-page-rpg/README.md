@@ -12,7 +12,7 @@ Un RPG narrativo de una sola página inspirado en el sistema 2d6, ambientado en 
 
 ## 📊 Estado del Proyecto
 
-### ✅ Completado (45%)
+### ✅ Completado (60%)
 
 - [x] **Sistema de Types TypeScript** (12 archivos)
   - Atributos, jugador, dados, mundo, escenas, NPCs, enemigos, items, quests, decisiones, estado del juego
@@ -53,8 +53,25 @@ Un RPG narrativo de una sola página inspirado en el sistema 2d6, ambientado en 
   - Generación dinámica de narrativa
   - Fallback procedural automático
   - Sistema de prompts contextual
+- [x] **Sistema de Catálogos** (useGameCatalog)
+  - Carga dinámica de items, enemigos, NPCs y locaciones
+  - Cache de datos JSON
+  - Hooks para acceso rápido
+- [x] **SceneManager** - Gestor de narrativa
+  - Control de flujo de escenas
+  - Sistema de decisiones condicionales
+  - Integración con quests y reputación
+- [x] **Sistema de Comercio** (EconomySystem)
+  - Compra/venta de items
+  - Precios dinámicos y reputación
+  - Tipos de comerciantes
+- [x] **Sistema de Audio Contextual** (AudioService)
+  - 11 contextos musicales (combate, horror, traición, etc.)
+  - 28 efectos de sonido
+  - Fade in/out automático
+  - Control de volumen independiente
 
-### ⏳ En Progreso (55%)
+### ⏳ En Progreso (40%)
 
 - [x] Motor narrativo (scene engine) - **Completado**
 - [x] Sistema de dados 2d6 con modificadores - **Completado**
@@ -153,5 +170,5 @@ MIT License - Ver archivo LICENSE para más detalles.
 ---
 
 **Estado**: 🟢 En Desarrollo Activo  
-**Versión**: 0.2.0 (Sistemas core completados - Combat, Inventory, Save)  
-**Última actualización**: Enero 2025
+**Versión**: 0.3.0 (Integración narrativa + Audio contextual + Comercio)  
+**Última actualización**: Enero 2025 (14)
