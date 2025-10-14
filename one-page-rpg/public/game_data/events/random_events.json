@@ -1,0 +1,194 @@
+{
+  "random_events": {
+    "world_events": [
+      {
+        "id": "plague_spreads",
+        "name": "La Plaga se Expande",
+        "probability": 0.15,
+        "trigger": "location_change",
+        "description": "Escuchas rumores de que otro pueblo ha caído en el Silencio. La Plaga se expande.",
+        "effect": {
+          "type": "world_state_change",
+          "attribute": "veil_influence",
+          "value": 1
+        }
+      },
+      {
+        "id": "merchant_caravan",
+        "name": "Caravana de Comerciantes",
+        "probability": 0.20,
+        "trigger": "travel",
+        "description": "Te cruzas con una caravana de comerciantes nerviosos. Ofrecen sus mercancías a bajo precio.",
+        "effect": {
+          "type": "unlock_shop",
+          "shop_id": "traveling_merchant"
+        }
+      },
+      {
+        "id": "echo_shrine",
+        "name": "Santuario del Eco",
+        "probability": 0.10,
+        "trigger": "exploration",
+        "description": "Encuentras un pequeño santuario olvidado. El aire vibra con resonancia mágica.",
+        "effect": {
+          "type": "restore_resource",
+          "resource": "fatigue",
+          "amount": 1
+        }
+      }
+    ],
+    "combat_encounters": [
+      {
+        "id": "ambush_whispers",
+        "name": "Emboscada de Susurrantes",
+        "probability": 0.25,
+        "location_types": ["wilderness", "dungeon"],
+        "level_range": [1, 3],
+        "enemies": ["susurrante", "susurrante"],
+        "description": "Figuras sombrías emergen del vacío, susurrando palabras sin sentido."
+      },
+      {
+        "id": "cultist_patrol",
+        "name": "Patrulla del Culto",
+        "probability": 0.20,
+        "location_types": ["settlement", "wilderness"],
+        "level_range": [2, 4],
+        "enemies": ["guardia_silencio", "guardia_silencio"],
+        "description": "Guardias del Silencio patrullan el área. Sus máscaras sin boca giran hacia ti.",
+        "conditional": {
+          "flag": "joined_circle_echo",
+          "value": true
+        }
+      },
+      {
+        "id": "bandits_attack",
+        "name": "Bandidos Desesperados",
+        "probability": 0.30,
+        "location_types": ["wilderness"],
+        "level_range": [1, 3],
+        "enemies": ["maton_generico", "maton_generico"],
+        "description": "Bandidos desesperados intentan robarte. El hambre en sus ojos es real.",
+        "loot": {
+          "gold": "1d6",
+          "items": ["garrote_tosco"]
+        }
+      }
+    ],
+    "social_encounters": [
+      {
+        "id": "refugee_family",
+        "name": "Familia de Refugiados",
+        "probability": 0.15,
+        "trigger": "travel",
+        "description": "Una familia huyendo de un pueblo infectado te pide ayuda.",
+        "choices": [
+          {
+            "id": "help_refugees",
+            "text": "Darles comida y monedas",
+            "cost": {
+              "gold": 10
+            },
+            "reward": {
+              "reputation": 5
+            }
+          },
+          {
+            "id": "ignore_refugees",
+            "text": "Ignorarlos y seguir tu camino",
+            "consequence": {
+              "reputation": -5
+            }
+          }
+        ]
+      },
+      {
+        "id": "hermit_warning",
+        "name": "Advertencia del Ermitaño",
+        "probability": 0.10,
+        "trigger": "exploration",
+        "description": "Un ermitaño loco te advierte sobre 'el canto que se apaga' y 'los que cosen la realidad'.",
+        "reward": {
+          "type": "hint",
+          "hint_id": "veil_weakness"
+        },
+        "conditional": {
+          "flag": "joined_circle_echo",
+          "value": false
+        }
+      },
+      {
+        "id": "cultist_recruiter",
+        "name": "Reclutador del Culto",
+        "probability": 0.12,
+        "trigger": "settlement",
+        "description": "Un miembro del Culto del Silencio intenta convencerte de unirte a ellos. Su boca está cosida.",
+        "choices": [
+          {
+            "id": "listen_cultist",
+            "text": "Escuchar su sermón mudo",
+            "reward": {
+              "type": "lore",
+              "lore_id": "culto_filosofia"
+            }
+          },
+          {
+            "id": "attack_cultist",
+            "text": "Atacar al reclutador",
+            "combat": ["guardia_silencio"]
+          },
+          {
+            "id": "walk_away",
+            "text": "Alejarte en silencio",
+            "consequence": null
+          }
+        ]
+      }
+    ],
+    "treasure_finds": [
+      {
+        "id": "hidden_cache",
+        "name": "Alijo Escondido",
+        "probability": 0.20,
+        "trigger": "exploration",
+        "description": "Encuentras un alijo escondido por un aventurero que nunca volvió a buscarlo.",
+        "loot": {
+          "gold": "2d6+5",
+          "items": ["pocion_curacion"]
+        }
+      },
+      {
+        "id": "veil_artifact",
+        "name": "Artefacto del Velo",
+        "probability": 0.08,
+        "trigger": "exploration",
+        "description": "Un objeto negro y frío yace en el suelo. Parece absorber la luz.",
+        "loot": {
+          "items": ["diente_sombra"]
+        },
+        "warning": "Tocar artefactos del Velo puede ser peligroso."
+      }
+    ]
+  },
+  "event_triggers": {
+    "location_change": {
+      "description": "Se activa al cambiar de ubicación",
+      "frequency": "every_transition"
+    },
+    "travel": {
+      "description": "Se activa durante viajes por el mundo",
+      "frequency": "random_during_travel"
+    },
+    "exploration": {
+      "description": "Se activa al explorar una nueva zona",
+      "frequency": "random_on_search"
+    },
+    "settlement": {
+      "description": "Se activa al entrar a un asentamiento",
+      "frequency": "random_on_entry"
+    },
+    "combat_end": {
+      "description": "Se activa después de terminar un combate",
+      "frequency": "after_every_combat"
+    }
+  }
+}
