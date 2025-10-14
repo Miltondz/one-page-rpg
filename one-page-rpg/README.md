@@ -1,75 +1,127 @@
-# React + TypeScript + Vite
+# 🎲 One Page RPG - Solo Adventure
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Un RPG narrativo de una sola página inspirado en el sistema 2d6, ambientado en el mundo dark fantasy de **Griswald**, donde la Plaga del Silencio consume voces y voluntades.
 
-Currently, two official plugins are available:
+## 🌟 Características
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Sistema 2d6**: Mecánica simple pero profunda basada en tiradas de 2 dados de 6 caras
+- **Narrativa Ramificada**: Decisiones que importan y cambian el curso de la historia
+- **UI Retro**: Interfaz pixel-art con el framework RPGUI
+- **Sin Servidor**: Todo corre en el navegador, sin necesidad de backend
+- **TypeScript Completo**: Código fuertemente tipado para mayor robustez
 
-## React Compiler
+## 📊 Estado del Proyecto
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+### ✅ Completado (15%)
 
-Note: This will impact Vite dev & build performances.
+- [x] **Sistema de Types TypeScript** (12 archivos)
+  - Atributos, jugador, dados, mundo, escenas, NPCs, enemigos, items, quests, decisiones, estado del juego
+- [x] **Integración RPGUI** 
+  - 14 componentes React personalizados
+  - Demo funcional con barras de salud/maná e inventario
+- [x] **Archivos JSON del Prólogo** (12 archivos, ~52KB)
+  - Configuración del juego y mundo
+  - 8 NPCs completamente definidos
+  - 5 enemigos + 1 boss con habilidades únicas
+  - 5 localizaciones explorables
+  - 13 escenas narrativas completas
+  - Sistema de decisiones y consecuencias
+  - Eventos aleatorios y encuentros
 
-## Expanding the ESLint configuration
+### ⏳ En Progreso (85%)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- [ ] Motor narrativo (scene engine)
+- [ ] Sistema de dados 2d6 con modificadores
+- [ ] Sistema de combate
+- [ ] Gestión de inventario
+- [ ] Persistencia (localStorage)
+- [ ] Componentes de UI del juego
+- [ ] Pantallas principales (creación, juego, combate)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🎮 El Prólogo: "La Deuda del Ladrón de Ecos"
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Historia
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Debes una deuda imposible de pagar a **'La Rata' Alenko**, un criminal que controla los muelles de Murogris. Te ofrece una salida: entregar una caja sellada a un ermitaño en las montañas. Pero la caja susurra con una energía antinatural, y pronto descubrirás que has sido arrastrado a una conspiración que involucra:
+
+- **El Velo**: Una dimensión de entropía que consume la realidad
+- **La Plaga del Silencio**: Una enfermedad que roba voces y voluntades
+- **El Círculo del Eco**: Magos que luchan por restaurar el antiguo Canto
+- **El Culto del Silencio**: Fanáticos que adoran la entropía
+
+### Contenido del Prólogo
+
+- **13 escenas narrativas** con múltiples branches
+- **5 localizaciones** (ciudad, camino, cueva, pueblo, minas)
+- **2 dungeons** con exploración y combate
+- **1 boss fight** contra El Coleccionista de Voces
+- **3+ horas de juego** (estimado)
+- **2 finales principales** (ayudar o traicionar al Eremita)
+
+## 🛠️ Tecnologías
+
+- **React 18** + **TypeScript 5**
+- **Vite** (build tool)
+- **RPGUI** (UI framework pixel-art)
+- **CSS Modules** (estilos componetizados)
+
+## 🚀 Instalación y Ejecución
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/Miltondz/one-page-rpg.git
+cd one-page-rpg
+
+# Instalar dependencias
+npm install
+
+# Ejecutar en modo desarrollo
+npm run dev
+
+# Build para producción
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 📖 Sistema de Juego
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Atributos Base (2d6)
+- **FUE** (Fuerza): Combate cuerpo a cuerpo, fuerza bruta
+- **AGI** (Agilidad): Combate a distancia, sigilo, reflejos
+- **SAB** (Sabiduría): Magia, conocimiento, percepción
+- **SUE** (Suerte): Eventos aleatorios, esquivar destino
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### Mecánica 2d6
+- **2-6**: Fallo catastrófico
+- **7-9**: Éxito con consecuencias
+- **10-11**: Éxito limpio
+- **12**: Éxito crítico
+
+### Recursos
+- **Heridas**: Salud física (base: 3)
+- **Fatiga**: Energía mental/mágica (base: 3)
+- **Experiencia**: 3 XP = 1 nivel
+
+## 🌍 El Mundo: Griswald
+
+Una baronía fronteriza perpetuamente nublada, atrapada en un otoño eterno. La magia del Canto se desvanece mientras el Velo se filtra en la realidad, robando voces y memorias.
+
+### Facciones Principales
+- **Casa Von Hess**: Nobleza corrupta que busca controlar el Silencio
+- **El Culto del Silencio**: Fanáticos que adoran la entropía
+- **El Círculo del Eco**: Magos que luchan por restaurar el Canto
+
+## 📜 Licencia
+
+MIT License - Ver archivo LICENSE para más detalles.
+
+## 🎯 Créditos
+
+- **Sistema RPGUI**: [RonenNess/RPGUI](https://github.com/RonenNess/RPGUI)
+- **Fuente**: Press Start 2P (Google Fonts)
+- **Framework**: React + TypeScript + Vite
+
+---
+
+**Estado**: 🟢 En Desarrollo Activo  
+**Versión**: 0.1.0 (Prólogo en construcción)  
+**Última actualización**: Enero 2025
