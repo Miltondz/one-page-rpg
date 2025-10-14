@@ -3,18 +3,11 @@
  * Combina RPGUI con estilos pixel art personalizados
  */
 
-/* Reset y base */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
+/* Reset y base - NO sobrescribir estilos de RPGUI */
 body {
   margin: 0;
   padding: 0;
   background-color: #000;
-  overflow: hidden;
 }
 
 /* Forzar renderizado pixelado para todas las imágenes */

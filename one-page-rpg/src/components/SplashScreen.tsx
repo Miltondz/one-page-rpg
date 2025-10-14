@@ -44,53 +44,117 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
   }, [onComplete, duration]);
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black flex items-center justify-center">
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 100,
+      backgroundColor: '#000',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }}>
       {/* Scanlines effect */}
-      <div className="absolute inset-0 pointer-events-none opacity-20"
-        style={{
-          background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)',
-        }}
-      />
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        pointerEvents: 'none',
+        opacity: 0.2,
+        background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)',
+      }} />
 
-      <div className="text-center space-y-8 px-8">
+      <div style={{ textAlign: 'center', padding: '0 32px' }}>
         {/* Logo/Icon */}
-        <div className={`text-8xl transition-all duration-1000 ${showText ? 'scale-100 opacity-100' : 'scale-50 opacity-0'}`}>
+        <div style={{
+          fontSize: '96px',
+          marginBottom: '32px',
+          transition: 'all 1s',
+          transform: showText ? 'scale(1)' : 'scale(0.5)',
+          opacity: showText ? 1 : 0
+        }}>
           ⚔️
         </div>
 
         {/* Title */}
-        <div className={`space-y-2 transition-all duration-1000 delay-300 ${showText ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-          <h1 className="text-purple-400 text-4xl font-bold tracking-wider text-shadow-lg">
+        <div style={{
+          marginBottom: '32px',
+          transition: 'all 1s',
+          opacity: showText ? 1 : 0,
+          transform: showText ? 'translateY(0)' : 'translateY(16px)'
+        }}>
+          <h1 style={{
+            color: '#a855f7',
+            fontSize: '36px',
+            fontWeight: 'bold',
+            letterSpacing: '0.1em',
+            textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
+            marginBottom: '8px'
+          }}>
             ONE PAGE RPG
           </h1>
-          <p className="text-gray-400 text-sm tracking-widest">
+          <p style={{
+            color: '#9ca3af',
+            fontSize: '14px',
+            letterSpacing: '0.2em'
+          }}>
             GRISWALD CHRONICLES
           </p>
         </div>
 
         {/* Loading bar */}
-        <div className={`w-80 mx-auto transition-all duration-1000 delay-500 ${showText ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-          <div className="h-4 bg-gray-800 border-2 border-gray-600 relative overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-purple-600 to-purple-400 transition-all duration-100"
-              style={{ width: `${progress}%` }}
-            />
-            {/* Shine effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shine" />
+        <div style={{
+          width: '320px',
+          margin: '0 auto 32px',
+          transition: 'all 1s',
+          opacity: showText ? 1 : 0,
+          transform: showText ? 'translateY(0)' : 'translateY(16px)'
+        }}>
+          <div style={{
+            height: '16px',
+            backgroundColor: '#1f2937',
+            border: '2px solid #4b5563',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              height: '100%',
+              background: 'linear-gradient(to right, #9333ea, #a855f7)',
+              width: `${progress}%`,
+              transition: 'width 0.1s'
+            }} />
           </div>
-          <p className="text-gray-500 text-xs mt-2">
+          <p style={{
+            color: '#6b7280',
+            fontSize: '12px',
+            marginTop: '8px'
+          }}>
             Cargando... {progress}%
           </p>
         </div>
 
         {/* Version */}
-        <p className={`text-gray-600 text-xs transition-all duration-1000 delay-700 ${showText ? 'opacity-100' : 'opacity-0'}`}>
+        <p style={{
+          color: '#4b5563',
+          fontSize: '12px',
+          marginBottom: '16px',
+          transition: 'opacity 1s',
+          opacity: showText ? 1 : 0
+        }}>
           v0.1.0 - Prólogo: La Deuda del Ladrón de Ecos
         </p>
 
-        {/* Press any key hint (appears at the end) */}
+        {/* Press any key hint */}
         {progress >= 100 && (
-          <p className="text-gray-500 text-xs animate-pulse">
+          <p style={{
+            color: '#6b7280',
+            fontSize: '12px',
+            animation: 'pulse 2s infinite'
+          }}>
             Presiona cualquier tecla para continuar...
           </p>
         )}

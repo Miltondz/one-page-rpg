@@ -1,6 +1,8 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+// Importar index.css y retro.css DESPUÉS para no sobrescribir RPGUI
 import './index.css';
+import './styles/retro.css';
 import App from './App.tsx';
 import { getPromptService } from './services/PromptConfigService';
 

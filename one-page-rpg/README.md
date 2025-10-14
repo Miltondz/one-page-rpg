@@ -129,6 +129,18 @@ Un RPG narrativo de una sola página inspirado en el sistema 2d6, ambientado en 
     - Opciones de respuesta contextuales
     - Integración con NPCMemorySystem
     - 8 emociones diferentes (neutral, happy, angry, etc.)
+- [x] **Layout Base de Pantalla Principal** ⭐ NUEVO
+  - **RetroGameScreen**: Layout 1280x720 con RPGUI
+    - Grid de 3 columnas (250px | 1fr | 250px)
+    - Header compacto con barras HP/MP/EXP personalizadas
+    - Panel de personaje: Avatar 160x160px + stats
+    - Panel de Quest Log con contenedor extra
+    - Scene Display: 280px altura con marco dorado
+    - Narrative Panel: 320px altura sin título
+    - Inventario: Grid 3x4 con 300px altura
+    - Footer: Input de comandos + botones Save/Load/Options
+    - Sin scrollbars, centrado responsive (95vh)
+    - Snapshot guardado para referencia futura
 
 ### ⏳ En Progreso (5%)
 
@@ -245,11 +257,11 @@ MIT License - Ver archivo LICENSE para más detalles.
 
 ---
 
-**Estado**: 🜢 En Desarrollo Activo  
-**Versión**: 0.7.0 (Componentes Visuales + Corrección Completa)  
-**Última actualización**: Enero 2025 (14)  
+**Estado**: 🎲 En Desarrollo Activo  
+**Versión**: 0.8.0 (Layout Base Completado)  
+**Última actualización**: Octubre 2025 (14)  
 **Compilación**: ✅ 0 errores TypeScript  
-**Tests**: 79/100 pasando (79%)
+**Bundle**: 218.08 kB (68.17 kB gzipped)
 
 ## 🧪 Testing
 
