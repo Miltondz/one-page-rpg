@@ -1,0 +1,73 @@
+/**
+ * Estilos globales para One Page RPG
+ * Combina RPGUI con estilos pixel art personalizados
+ */
+
+/* Reset y base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #000;
+  overflow: hidden;
+}
+
+/* Forzar renderizado pixelado para todas las imágenes */
+img,
+canvas {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* Font principal para texto del juego */
+.game-text {
+  font-family: 'Press Start 2P', cursive;
+  line-height: 1.6;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.8);
+}
+
+/* Contenedor principal del juego - pantalla completa */
+#root {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1e 100%);
+}
+
+/* Responsive para móvil */
+@media (max-width: 768px) {
+  .rpgui-container {
+    max-width: 95vw;
+  }
+
+  .game-text {
+    font-size: 12px;
+  }
+}
+
+/* Scrollbar personalizado para mantener el estilo retro */
+.rpgui-content ::-webkit-scrollbar {
+  width: 12px;
+}
+
+.rpgui-content ::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border: 1px solid #444;
+}
+
+.rpgui-content ::-webkit-scrollbar-thumb {
+  background: #ffd700;
+  border: 1px solid #000;
+}
+
+.rpgui-content ::-webkit-scrollbar-thumb:hover {
+  background: #ffed4e;
+}

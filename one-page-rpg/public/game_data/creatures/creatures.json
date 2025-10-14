@@ -1,0 +1,153 @@
+{
+  "enemy_pools": {
+    "level_1_3": ["susurrante", "rastrero_hueso", "guardia_silencio", "maton_generico"],
+    "level_4_6": ["salmodiante", "coleccionista_voces"]
+  },
+  "enemies": {
+    "maton_generico": {
+      "id": "maton_generico",
+      "name": "Matón de Alenko",
+      "level": 1,
+      "stats": {
+        "FUE": 3,
+        "AGI": 2,
+        "DEF": 7,
+        "Heridas": 3
+      },
+      "abilities": [
+        {
+          "id": "golpe_brutal",
+          "name": "Golpe Brutal",
+          "mechanic": {
+            "type": "SPECIAL_ATTACK",
+            "effect": "DEAL_DAMAGE",
+            "power": 1
+          }
+        }
+      ],
+      "loot_table": {
+        "common": ["garrote_tosco", "monedas_1_3"]
+      },
+      "description": "Músculo a sueldo con más fuerza que cerebro. Leal solo al oro de Alenko."
+    },
+    "susurrante": {
+      "id": "susurrante",
+      "name": "Susurrante",
+      "level": 2,
+      "stats": {
+        "FUE": 1,
+        "AGI": 4,
+        "DEF": 7,
+        "Heridas": 2
+      },
+      "abilities": [
+        {
+          "id": "drenaje_sombra",
+          "name": "Drenaje de Sombra",
+          "mechanic": {
+            "type": "SPECIAL_ATTACK",
+            "effect": "DEAL_DAMAGE",
+            "damage_type": "fatigue",
+            "power": 1
+          }
+        }
+      ],
+      "loot_table": {
+        "common": ["eco_atrapado"],
+        "uncommon": ["fragmento_sombra"]
+      },
+      "description": "Ecos de almas perdidas, formados por polvo y oscuridad. Sus susurros drenan la voluntad."
+    },
+    "rastrero_hueso": {
+      "id": "rastrero_hueso",
+      "name": "Rastrero de Hueso",
+      "level": 3,
+      "stats": {
+        "FUE": 3,
+        "AGI": 3,
+        "DEF": 6,
+        "Heridas": 3
+      },
+      "abilities": [],
+      "loot_table": {
+        "common": ["fragmento_hueso_retorcido"]
+      },
+      "description": "Una abominación arácnida hecha de huesos humanos y animales fusionados. Se mueve con un clic-clac espeluznante."
+    },
+    "guardia_silencio": {
+      "id": "guardia_silencio",
+      "name": "Guardia del Silencio",
+      "level": 3,
+      "stats": {
+        "FUE": 3,
+        "AGI": 2,
+        "DEF": 7,
+        "Heridas": 3
+      },
+      "abilities": [],
+      "loot_table": {
+        "common": ["garrote_tosco"],
+        "uncommon": ["simbolo_silencio"]
+      },
+      "description": "Un aldeano fanático con una máscara de cuero sin boca. Totalmente mudo y absolutamente leal al Culto."
+    },
+    "salmodiante": {
+      "id": "salmodiante",
+      "name": "El Salmodiante",
+      "level": 4,
+      "stats": {
+        "FUE": 3,
+        "AGI": 3,
+        "DEF": 8,
+        "Heridas": 4
+      },
+      "abilities": [
+        {
+          "id": "canto_debilitador",
+          "name": "Canto Debilitador",
+          "mechanic": {
+            "type": "AURA",
+            "effect": "APPLY_MODIFIER",
+            "attribute": "SAB",
+            "value": -1,
+            "range": "scene"
+          }
+        }
+      ],
+      "loot_table": {
+        "common": ["daga_ritual"],
+        "uncommon": ["pergamino_silencio"]
+      },
+      "description": "Un Guardia del Silencio de élite. Su zumbido gutural debilita la voluntad de quienes lo escuchan."
+    }
+  },
+  "bosses": {
+    "coleccionista_voces": {
+      "id": "coleccionista_voces",
+      "name": "El Coleccionista de Voces",
+      "level": 6,
+      "stats": {
+        "FUE": 4,
+        "AGI": 3,
+        "DEF": 9,
+        "Heridas": 5
+      },
+      "phases": 2,
+      "abilities": [
+        {
+          "id": "aguja_quitinosa",
+          "name": "Aguja Quitinosa",
+          "mechanic": {
+            "type": "SPECIAL_ATTACK",
+            "effect": "APPLY_STATUS",
+            "status_id": "voluntad_rota"
+          }
+        }
+      ],
+      "loot_table": {
+        "guaranteed": ["laringe_cristal", "aguja_hueso_inacabada"]
+      },
+      "description": "Una abominación humanoide cubierta de bocas cosidas. Extrae las voces con una aguja de hueso, coleccionándolas en frascos de cristal."
+    }
+  }
+}

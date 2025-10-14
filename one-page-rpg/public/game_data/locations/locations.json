@@ -1,0 +1,129 @@
+{
+  "locations": {
+    "murogris_ciudad": {
+      "id": "murogris_ciudad",
+      "name": "Murogris",
+      "type": "settlement",
+      "description": "Una ciudad portuaria decadente, perpetuamente envuelta en niebla. Las calles adoquinadas están resbaladizas por el musgo y las casas se inclinan unas sobre otras como borrachos.",
+      "atmosphere": "decadente, húmedo, opresivo",
+      "points_of_interest": [
+        {
+          "id": "guarida_alenko",
+          "name": "La Guarida de Alenko",
+          "description": "Un almacén convertido en antro criminal. Huele a pescado podrido y traición.",
+          "npcs": ["alenko_la_rata", "grol_thug", "finch_thug"]
+        },
+        {
+          "id": "muelles",
+          "name": "Los Muelles",
+          "description": "Barcos medio hundidos se mecen en el agua negra. Nadie trabaja aquí después del anochecer.",
+          "danger_level": "moderate"
+        },
+        {
+          "id": "mercado_negro",
+          "name": "El Mercado Negro",
+          "description": "Un callejón donde se vende lo prohibido: artefactos del Velo, pociones ilegales, información peligrosa.",
+          "services": ["merchant", "information"]
+        }
+      ],
+      "connected_locations": ["camino_montana", "arroyo_aullido_pueblo"],
+      "fast_travel_available": true
+    },
+    "camino_montana": {
+      "id": "camino_montana",
+      "name": "Camino de Montaña hacia la Cueva",
+      "type": "wilderness",
+      "description": "Un sendero rocoso que serpentea hacia las montañas. Los árboles aquí están retorcidos y las sombras se mueven incluso cuando no hay viento.",
+      "atmosphere": "tenso, aislado, hostil",
+      "encounters": [
+        {
+          "type": "ambush",
+          "enemies": ["maton_generico"],
+          "trigger": "first_visit",
+          "description": "Los matones de Alenko intentan robarte la caja."
+        },
+        {
+          "type": "environmental",
+          "challenge": "AGI",
+          "difficulty": 7,
+          "description": "Un derrumbe bloquea el camino. Debes trepar o buscar un rodeo."
+        }
+      ],
+      "connected_locations": ["murogris_ciudad", "cueva_aislada"],
+      "fast_travel_available": false
+    },
+    "cueva_aislada": {
+      "id": "cueva_aislada",
+      "name": "Cueva del Eremita",
+      "type": "dungeon",
+      "description": "Una cueva natural con inscripciones que brillan débilmente. El aire vibra con resonancia mágica.",
+      "atmosphere": "misterioso, sagrado, antiguo",
+      "zones": [
+        {
+          "id": "entrada_cueva",
+          "name": "Entrada de la Cueva",
+          "description": "Estalactitas gotean agua que nunca forma charcos.",
+          "enemies": ["susurrante"]
+        },
+        {
+          "id": "santuario_eremita",
+          "name": "Santuario del Eremita",
+          "description": "Una cámara circular con un círculo de runas en el suelo. El Eremita del Eco te espera aquí.",
+          "npcs": ["eremita_eco"],
+          "loot": ["diario_explorador"]
+        }
+      ],
+      "connected_locations": ["camino_montana"],
+      "fast_travel_available": false
+    },
+    "arroyo_aullido_pueblo": {
+      "id": "arroyo_aullido_pueblo",
+      "name": "Arroyo del Aullido",
+      "type": "settlement",
+      "description": "Un pueblo minero donde nadie habla más fuerte que un susurro. Muchos aldeanos tienen bocas cosidas.",
+      "atmosphere": "silencioso, perturbador, opresivo",
+      "points_of_interest": [
+        {
+          "id": "taberna_eco_roto",
+          "name": "Taberna del Eco Roto",
+          "description": "El único lugar donde aún se escucha algo de conversación. Gregor, el tabernero, sirve bebida aguada.",
+          "npcs": ["gregor_tabernero"],
+          "services": ["rest", "rumors"]
+        },
+        {
+          "id": "templo_silencio",
+          "name": "Templo del Silencio",
+          "description": "Una iglesia convertida en sede del culto. Símbolo de una boca cosida tallado en la puerta.",
+          "npcs": ["malakai_profeta"],
+          "enemies": ["guardia_silencio"]
+        }
+      ],
+      "connected_locations": ["murogris_ciudad", "minas_abandonadas"],
+      "fast_travel_available": true
+    },
+    "minas_abandonadas": {
+      "id": "minas_abandonadas",
+      "name": "Minas Abandonadas",
+      "type": "dungeon",
+      "description": "Túneles oscuros donde los mineros desaparecieron hace meses. Se escuchan susurros en las profundidades.",
+      "atmosphere": "claustrofóbico, oscuro, peligroso",
+      "zones": [
+        {
+          "id": "tunel_entrada",
+          "name": "Túnel de Entrada",
+          "description": "Carriles de minería oxidados. Herramientas abandonadas cubiertas de polvo.",
+          "enemies": ["susurrante", "rastrero_hueso"]
+        },
+        {
+          "id": "camara_ritual",
+          "name": "Cámara Ritual",
+          "description": "Una caverna natural convertida en altar. El suelo está manchado con sangre negra.",
+          "boss": "coleccionista_voces",
+          "loot": ["laringe_cristal", "aguja_hueso_inacabada"]
+        }
+      ],
+      "connected_locations": ["arroyo_aullido_pueblo"],
+      "fast_travel_available": false
+    }
+  }
+}

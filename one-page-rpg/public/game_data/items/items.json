@@ -1,0 +1,217 @@
+{
+  "weapons": {
+    "espada_simple": {
+      "id": "espada_simple",
+      "name": "Espada Simple",
+      "type": "WEAPON",
+      "subtype": "sword",
+      "value": 10,
+      "rarity": "common",
+      "description": "Una espada de hierro forjada competentemente. Nada especial, pero cumple su función.",
+      "mechanic": {
+        "type": "EQUIPMENT_BONUS",
+        "attribute": "FUE",
+        "value": 1,
+        "context": "COMBAT"
+      },
+      "isEquippable": true,
+      "isConsumable": false,
+      "isQuestItem": false
+    },
+    "daga_rapida": {
+      "id": "daga_rapida",
+      "name": "Daga Rápida",
+      "type": "WEAPON",
+      "subtype": "dagger",
+      "value": 8,
+      "rarity": "common",
+      "description": "Una daga ligera y equilibrada. Perfecta para ataques rápidos y sigilosos.",
+      "mechanic": {
+        "type": "EQUIPMENT_BONUS",
+        "attribute": "AGI",
+        "value": 1,
+        "context": "COMBAT"
+      },
+      "isEquippable": true,
+      "isConsumable": false,
+      "isQuestItem": false
+    },
+    "baston_nudoso": {
+      "id": "baston_nudoso",
+      "name": "Bastón Nudoso",
+      "type": "WEAPON",
+      "subtype": "staff",
+      "value": 12,
+      "rarity": "common",
+      "description": "Un bastón de madera antigua con inscripciones arcanas casi borradas.",
+      "mechanic": {
+        "type": "EQUIPMENT_BONUS",
+        "attribute": "SAB",
+        "value": 1,
+        "context": "COMBAT"
+      },
+      "isEquippable": true,
+      "isConsumable": false,
+      "isQuestItem": false
+    },
+    "arco_caza": {
+      "id": "arco_caza",
+      "name": "Arco de Caza",
+      "type": "WEAPON",
+      "subtype": "bow",
+      "value": 15,
+      "rarity": "common",
+      "description": "Un arco simple pero efectivo. Ideal para cazar o mantener distancia.",
+      "mechanic": {
+        "type": "EQUIPMENT_BONUS",
+        "attribute": "AGI",
+        "value": 1,
+        "context": "COMBAT"
+      },
+      "isEquippable": true,
+      "isConsumable": false,
+      "isQuestItem": false
+    },
+    "grimorio_basico": {
+      "id": "grimorio_basico",
+      "name": "Grimorio Básico",
+      "type": "WEAPON",
+      "subtype": "tome",
+      "value": 20,
+      "rarity": "uncommon",
+      "description": "Un libro de hechizos para principiantes. Contiene encantamientos simples pero útiles.",
+      "mechanic": {
+        "type": "EQUIPMENT_BONUS",
+        "attribute": "SAB",
+        "value": 1,
+        "context": "ALL"
+      },
+      "isEquippable": true,
+      "isConsumable": false,
+      "isQuestItem": false
+    },
+    "amuleto_suerte": {
+      "id": "amuleto_suerte",
+      "name": "Amuleto de la Suerte",
+      "type": "WEAPON",
+      "subtype": "amulet",
+      "value": 15,
+      "rarity": "common",
+      "description": "Un amuleto gastado con un trébol de cuatro hojas tallado.",
+      "mechanic": {
+        "type": "EQUIPMENT_BONUS",
+        "attribute": "SUE",
+        "value": 1,
+        "context": "ALL"
+      },
+      "isEquippable": true,
+      "isConsumable": false,
+      "isQuestItem": false
+    },
+    "garrote_tosco": {
+      "id": "garrote_tosco",
+      "name": "Garrote Tosco",
+      "type": "WEAPON",
+      "value": 5,
+      "rarity": "common",
+      "description": "Un palo con clavos. Brutal pero efectivo.",
+      "isEquippable": true,
+      "isConsumable": false,
+      "isQuestItem": false
+    }
+  },
+  "consumables": {
+    "pocion_curacion": {
+      "id": "pocion_curacion",
+      "name": "Poción de Curación",
+      "type": "CONSUMABLE",
+      "value": 25,
+      "rarity": "common",
+      "description": "Una poción roja que restaura 2 heridas.",
+      "mechanic": {
+        "type": "CONSUMABLE_EFFECT",
+        "effect": "RESTORE_WOUNDS",
+        "power": 2
+      },
+      "isEquippable": false,
+      "isConsumable": true,
+      "isQuestItem": false,
+      "maxStack": 3
+    },
+    "balsamo_silente": {
+      "id": "balsamo_silente",
+      "name": "Bálsamo Silente",
+      "type": "CONSUMABLE",
+      "value": 50,
+      "rarity": "uncommon",
+      "description": "Un ungüento que otorga sigilo perfecto durante 1 hora.",
+      "mechanic": {
+        "type": "CONSUMABLE_EFFECT",
+        "effect": "APPLY_STATUS",
+        "status_id": "perfect_stealth",
+        "duration": 1
+      },
+      "isEquippable": false,
+      "isConsumable": true,
+      "isQuestItem": false
+    }
+  },
+  "quest_items": {
+    "diente_sombra": {
+      "id": "diente_sombra",
+      "name": "Diente de Sombra",
+      "type": "QUEST_ITEM",
+      "value": 0,
+      "rarity": "rare",
+      "description": "Un colmillo negro y frío que vibra cerca de la magia del Velo. Parece absorber la luz.",
+      "isEquippable": false,
+      "isConsumable": false,
+      "isQuestItem": true
+    },
+    "caja_sellada_velo": {
+      "id": "caja_sellada_velo",
+      "name": "Caja Sellada del Velo",
+      "type": "QUEST_ITEM",
+      "value": 0,
+      "rarity": "legendary",
+      "description": "Un cofre de madera oscura, frío al tacto. Contiene docenas de Dientes de Sombra y artefactos prohibidos.",
+      "isEquippable": false,
+      "isConsumable": false,
+      "isQuestItem": true,
+      "questId": "prologo_deuda_ecos"
+    },
+    "diario_explorador": {
+      "id": "diario_explorador",
+      "name": "Diario de un Explorador",
+      "type": "QUEST_ITEM",
+      "value": 0,
+      "rarity": "uncommon",
+      "description": "Páginas arrancadas de un diario. Habla de ruinas, una plaga que roba voces, y algo que 'cose la realidad'.",
+      "isEquippable": false,
+      "isConsumable": false,
+      "isQuestItem": true
+    }
+  },
+  "status_effects": {
+    "perfect_stealth": {
+      "id": "perfect_stealth",
+      "name": "Sigilo Perfecto",
+      "type": "BUFF",
+      "description": "Éxito automático en tiradas de sigilo que no sean críticas.",
+      "icon": "🌑"
+    },
+    "voluntad_rota": {
+      "id": "voluntad_rota",
+      "name": "Voluntad Rota",
+      "type": "DEBUFF",
+      "description": "-2 a todas las tiradas de SAB. Tu voz se debilita.",
+      "mechanic": {
+        "type": "MODIFIER",
+        "attribute": "SAB",
+        "modifier": -2
+      },
+      "durationTurns": 3,
+      "icon": "💔"
+    }
+  }
+}

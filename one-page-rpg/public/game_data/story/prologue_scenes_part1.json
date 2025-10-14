@@ -1,0 +1,222 @@
+{
+  "scenes": {
+    "scene_01_intro": {
+      "id": "scene_01_intro",
+      "title": "La Deuda",
+      "location": "murogris_guarida_alenko",
+      "narrative": "El almacén apesta a pescado podrido y cerveza rancia. Dos figuras te bloquean la salida: Grol, un matón del tamaño de un oso, y Finch, nervioso como una rata acorralada. Ambos trabajan para 'La Rata' Alenko, el hombre al que le debes más de lo que puedes pagar.\n\nAlenko está sentado detrás de un escritorio manchado, contando monedas de cobre con dedos largos y huesudos. Cuando levantas la vista, sus ojos te evalúan como si fueras carne en un mercado.\n\n'Has estado evitándome', dice con voz suave. 'Eso no es inteligente. Pero tengo una propuesta que podría borrar tu deuda... si tienes agallas.'",
+      "npcs_present": ["alenko_la_rata", "grol_thug", "finch_thug"],
+      "decisions": [
+        {
+          "id": "decision_accept_job",
+          "text": "Escuchar la propuesta de Alenko",
+          "next_scene": "scene_02_the_job",
+          "consequences": []
+        },
+        {
+          "id": "decision_refuse_job",
+          "text": "Rechazar el trabajo e intentar negociar",
+          "next_scene": "scene_02b_negotiation",
+          "requirements": {
+            "attribute": "SAB",
+            "difficulty": 8
+          },
+          "consequences": [
+            {
+              "type": "relationship",
+              "target": "alenko_la_rata",
+              "value": -10
+            }
+          ]
+        },
+        {
+          "id": "decision_attack",
+          "text": "Atacar a Alenko ahora (¡PELIGROSO!)",
+          "next_scene": "scene_02c_combat_alenko",
+          "consequences": [
+            {
+              "type": "combat",
+              "enemies": ["grol_thug", "finch_thug"]
+            }
+          ]
+        }
+      ],
+      "atmosphere": "tenso, opresivo, claustrofóbico",
+      "music_mood": "ominous"
+    },
+    "scene_02_the_job": {
+      "id": "scene_02_the_job",
+      "title": "El Trabajo",
+      "location": "murogris_guarida_alenko",
+      "narrative": "Alenko sonríe, pero no es una sonrisa cálida. Desliza una caja de madera oscura sobre el escritorio. Es pequeña, del tamaño de un pan, y está sellada con cera negra.\n\n'Simple', dice. 'Llevas esto a un ermitaño en las montañas. No preguntas qué hay dentro. No la abres. La entregas, regresas, y tu deuda desaparece.'\n\nPero algo está mal. La caja es fría al tacto, antinatural. Y puedes jurar que escuchas un susurro muy débil emanando de ella...",
+      "npcs_present": ["alenko_la_rata"],
+      "items_received": ["caja_sellada_velo"],
+      "decisions": [
+        {
+          "id": "decision_take_box",
+          "text": "Tomar la caja y salir sin hacer preguntas",
+          "next_scene": "scene_03_mountain_road",
+          "consequences": [
+            {
+              "type": "add_item",
+              "item": "caja_sellada_velo"
+            },
+            {
+              "type": "start_objective",
+              "objective_id": "obj_2_survive_ambush"
+            }
+          ]
+        },
+        {
+          "id": "decision_inspect_box",
+          "text": "Examinar la caja más de cerca antes de aceptar",
+          "next_scene": "scene_02d_inspect",
+          "requirements": {
+            "attribute": "SAB",
+            "difficulty": 7
+          },
+          "consequences": []
+        },
+        {
+          "id": "decision_demand_info",
+          "text": "Exigir saber qué hay en la caja",
+          "next_scene": "scene_02e_demand",
+          "consequences": [
+            {
+              "type": "relationship",
+              "target": "alenko_la_rata",
+              "value": -20
+            }
+          ]
+        }
+      ],
+      "atmosphere": "inquietante, misterioso",
+      "music_mood": "tense"
+    },
+    "scene_03_mountain_road": {
+      "id": "scene_03_mountain_road",
+      "title": "El Camino de Montaña",
+      "location": "camino_montana",
+      "narrative": "El sendero serpentea hacia arriba, rodeado de árboles retorcidos que parecen observarte. La caja en tu mochila se siente cada vez más pesada y fría.\n\nDe repente, dos figuras emergen de las sombras. Matones con garrotes y sonrisas sucias. Uno escupe al suelo.\n\n'Alenko dijo que vendrías por aquí. Y que esa caja vale mucho más de lo que a ti te paga. Entrégala, y tal vez no te rompamos las piernas.'",
+      "npcs_present": [],
+      "enemies": ["maton_generico", "maton_generico"],
+      "decisions": [
+        {
+          "id": "decision_fight_thugs",
+          "text": "Luchar contra los matones",
+          "next_scene": "scene_04_after_ambush",
+          "consequences": [
+            {
+              "type": "start_combat",
+              "enemies": ["maton_generico", "maton_generico"]
+            }
+          ]
+        },
+        {
+          "id": "decision_run_away",
+          "text": "Huir por el bosque",
+          "next_scene": "scene_03b_chase",
+          "requirements": {
+            "attribute": "AGI",
+            "difficulty": 7
+          },
+          "consequences": [
+            {
+              "type": "apply_status",
+              "status_id": "exhausted",
+              "duration": 1
+            }
+          ]
+        },
+        {
+          "id": "decision_bribe_thugs",
+          "text": "Intentar sobornarlos con tu oro",
+          "next_scene": "scene_03c_bribe",
+          "requirements": {
+            "gold": 20
+          },
+          "consequences": [
+            {
+              "type": "lose_gold",
+              "amount": 20
+            }
+          ]
+        }
+      ],
+      "atmosphere": "peligroso, tenso",
+      "music_mood": "combat"
+    },
+    "scene_04_after_ambush": {
+      "id": "scene_04_after_ambush",
+      "title": "Después de la Emboscada",
+      "location": "camino_montana",
+      "narrative": "Los matones yacen inconscientes (o peor) en el barro. Registras sus cuerpos y encuentras unas pocas monedas y un garrote tosco.\n\nPero lo más inquietante es una nota en el bolsillo de uno de ellos: 'Matadlo si es necesario. Pero traedme la caja intacta. - A.'\n\nAlenko te tendió una trampa. Esto nunca fue un trabajo legítimo.",
+      "npcs_present": [],
+      "items_found": ["garrote_tosco", "monedas_1_3"],
+      "decisions": [
+        {
+          "id": "decision_continue_cave",
+          "text": "Continuar hacia la cueva del ermitaño",
+          "next_scene": "scene_05_cave_entrance",
+          "consequences": [
+            {
+              "type": "complete_objective",
+              "objective_id": "obj_2_survive_ambush"
+            }
+          ]
+        },
+        {
+          "id": "decision_return_confront",
+          "text": "Regresar a Murogris y confrontar a Alenko",
+          "next_scene": "scene_04b_confront_alenko",
+          "consequences": []
+        },
+        {
+          "id": "decision_open_box",
+          "text": "Intentar abrir la caja aquí mismo",
+          "next_scene": "scene_04c_open_box",
+          "requirements": {
+            "attribute": "SUE",
+            "difficulty": 9
+          },
+          "consequences": []
+        }
+      ],
+      "atmosphere": "revelador, traicionero",
+      "music_mood": "discovery"
+    },
+    "scene_05_cave_entrance": {
+      "id": "scene_05_cave_entrance",
+      "title": "La Entrada de la Cueva",
+      "location": "cueva_aislada",
+      "narrative": "La cueva se abre ante ti como una boca oscura. Inscripciones que brillan débilmente cubren las paredes, símbolos en un idioma que casi reconoces.\n\nEl aire vibra con una resonancia extraña, como si el mundo mismo estuviera cantando en un tono que solo puedes sentir, no escuchar.\n\nY entonces lo ves: un Susurrante. Una figura hecha de polvo y sombras, con ojos vacíos que te miran sin ver. Flota hacia ti, sus labios moviéndose en un susurro silencioso.",
+      "npcs_present": [],
+      "enemies": ["susurrante"],
+      "decisions": [
+        {
+          "id": "decision_fight_whisper",
+          "text": "Luchar contra el Susurrante",
+          "next_scene": "scene_06_hermit_chamber",
+          "consequences": [
+            {
+              "type": "start_combat",
+              "enemies": ["susurrante"]
+            }
+          ]
+        },
+        {
+          "id": "decision_sneak_past",
+          "text": "Intentar pasar sigilosamente",
+          "next_scene": "scene_06_hermit_chamber",
+          "requirements": {
+            "attribute": "AGI",
+            "difficulty": 8
+          },
+          "consequences": []
+        }
+      ],
+      "atmosphere": "místico, peligroso",
+      "music_mood": "exploration"
+    }
+  }
+}

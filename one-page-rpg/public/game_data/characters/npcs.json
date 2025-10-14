@@ -1,0 +1,81 @@
+{
+  "archetypes": {
+    "thug": {
+      "description": "Músculo a sueldo, leal solo al dinero."
+    },
+    "crime_boss": {
+      "description": "Inteligente, despiadado y siempre buscando una ventaja."
+    },
+    "hermit": {
+      "description": "Un recluso que posee conocimientos prohibidos."
+    },
+    "fanatic": {
+      "description": "Un líder carismático consumido por una fe peligrosa."
+    }
+  },
+  "key_npcs": {
+    "alenko_la_rata": {
+      "id": "alenko_la_rata",
+      "name": "'La Rata' Alenko",
+      "archetype": "crime_boss",
+      "race": "human",
+      "location": "murogris_guarida_alenko",
+      "quests_given": ["prologo_deuda_ecos"],
+      "relationship_start": -30,
+      "knowledge": ["contrabando_velo", "red_criminal_murogris"],
+      "description": "Un criminal astuto que controla los muelles de Murogris. Bajo y escurridizo, con ojos que nunca dejan de calcular ventajas."
+    },
+    "eremita_eco": {
+      "id": "eremita_eco",
+      "name": "El Eremita del Eco",
+      "archetype": "hermit",
+      "race": "human",
+      "location": "cueva_aislada",
+      "knowledge": [
+        "velo_dimension",
+        "corazon_resonante",
+        "historia_real_plaga"
+      ],
+      "relationship_start": 50,
+      "description": "Un anciano ermitaño que vive en las montañas. Su voz resuena con un poder extraño."
+    },
+    "malakai_profeta": {
+      "id": "malakai_profeta",
+      "name": "Malakai, el Profeta Mudo",
+      "archetype": "fanatic",
+      "race": "human",
+      "location": "arroyo_aullido_pueblo",
+      "relationship_start": -20,
+      "description": "Líder del Culto del Silencio. No tiene boca, pero su presencia habla de poder y locura."
+    }
+  },
+  "secondary_npcs": {
+    "grol_thug": {
+      "id": "grol_thug",
+      "name": "Grol",
+      "archetype": "thug",
+      "race": "human",
+      "location": "murogris_ciudad",
+      "relationship_start": -50,
+      "description": "Un matón enorme y brutal. Todo músculos y poca paciencia."
+    },
+    "finch_thug": {
+      "id": "finch_thug",
+      "name": "Finch",
+      "archetype": "thug",
+      "race": "human",
+      "location": "murogris_ciudad",
+      "relationship_start": -50,
+      "description": "Delgado y nervioso, pero letal con una daga. Habla demasiado."
+    },
+    "gregor_tabernero": {
+      "id": "gregor_tabernero",
+      "name": "Gregor",
+      "archetype": "civilian",
+      "race": "human",
+      "location": "arroyo_aullido_pueblo",
+      "relationship_start": 20,
+      "description": "Tabernero cansado que ha visto demasiado."
+    }
+  }
+}

@@ -1,0 +1,265 @@
+{
+  "scenes": {
+    "scene_06_hermit_chamber": {
+      "id": "scene_06_hermit_chamber",
+      "title": "El Santuario del Eremita",
+      "location": "cueva_aislada",
+      "narrative": "La cámara interior es circular, con un círculo de runas talladas en el suelo que brillan con luz plateada. En el centro, un anciano con barba larga y ojos que parecen contener galaxias te observa.\n\n'Has traído la Caja Sellada', dice con voz que resuena como una campana. 'Pero no entiendes lo que llevas. Eso no es un pago. Es veneno.'",
+      "npcs_present": ["eremita_eco"],
+      "decisions": [
+        {
+          "id": "decision_give_box",
+          "text": "Entregar la caja al ermitaño",
+          "next_scene": "scene_07_truth_revealed",
+          "consequences": [
+            {
+              "type": "remove_item",
+              "item": "caja_sellada_velo"
+            },
+            {
+              "type": "complete_objective",
+              "objective_id": "obj_3_deliver_box"
+            }
+          ]
+        },
+        {
+          "id": "decision_demand_answers",
+          "text": "Exigir respuestas antes de entregar nada",
+          "next_scene": "scene_06b_demand_truth",
+          "consequences": []
+        },
+        {
+          "id": "decision_keep_box",
+          "text": "Negarse a entregar la caja",
+          "next_scene": "scene_06c_refuse",
+          "consequences": [
+            {
+              "type": "relationship",
+              "target": "eremita_eco",
+              "value": -30
+            }
+          ]
+        }
+      ],
+      "atmosphere": "revelador, místico",
+      "music_mood": "mystical"
+    },
+    "scene_07_truth_revealed": {
+      "id": "scene_07_truth_revealed",
+      "title": "La Verdad del Velo",
+      "location": "cueva_aislada",
+      "narrative": "El Eremita abre la caja con cuidado. Dentro hay docenas de colmillos negros - Dientes de Sombra - y un frasco que contiene algo que parece humo solidificado.\n\n'Esto es magia del Velo', explica. 'Una dimensión de entropía que está filtrándose en nuestro mundo. La Plaga del Silencio no es una enfermedad. Es la realidad misma siendo... devorada.'\n\nTe muestra un mapa con símbolos. 'Alenko no es solo un criminal. Está contrabando artefactos del Velo para alguien mucho más peligroso. Y tú...' Te mira con lástima. 'Tú ya has sido marcado por llevar esto.'",
+      "npcs_present": ["eremita_eco"],
+      "items_received": ["diario_explorador"],
+      "decisions": [
+        {
+          "id": "decision_join_circle",
+          "text": "Pedir ayuda y unirte al Círculo del Eco",
+          "next_scene": "scene_08_join_hermit",
+          "consequences": [
+            {
+              "type": "relationship",
+              "target": "circulo_eco",
+              "value": 50
+            },
+            {
+              "type": "complete_objective",
+              "objective_id": "obj_4_learn_truth"
+            }
+          ]
+        },
+        {
+          "id": "decision_betray_hermit",
+          "text": "Vender esta información a Alenko",
+          "next_scene": "scene_08b_betray",
+          "consequences": [
+            {
+              "type": "relationship",
+              "target": "circulo_eco",
+              "value": -50
+            },
+            {
+              "type": "relationship",
+              "target": "alenko_la_rata",
+              "value": 30
+            }
+          ]
+        },
+        {
+          "id": "decision_go_alone",
+          "text": "Rechazar ambos bandos y seguir tu propio camino",
+          "next_scene": "scene_08c_lone_wolf",
+          "consequences": []
+        }
+      ],
+      "atmosphere": "revelador, trascendental",
+      "music_mood": "revelation"
+    },
+    "scene_08_join_hermit": {
+      "id": "scene_08_join_hermit",
+      "title": "El Camino del Eco",
+      "location": "cueva_aislada",
+      "narrative": "El Eremita asiente con aprobación. 'Entonces te enseñaré. Pero primero, necesitas entender contra qué luchamos.'\n\nTe entrega un diario arrancado de un explorador perdido. Sus páginas hablan de ruinas antiguas, de una Plaga que roba voces, y de algo llamado el Corazón Resonante - un artefacto que podría restaurar el Canto y detener al Velo.\n\n'Hay un pueblo cercano, Arroyo del Aullido, donde el Culto del Silencio ha convertido a la gente. Si quieres probar tu valía, empieza por ahí.'",
+      "npcs_present": ["eremita_eco"],
+      "items_received": ["amuleto_resonancia"],
+      "decisions": [
+        {
+          "id": "decision_investigate_village",
+          "text": "Ir a investigar Arroyo del Aullido",
+          "next_scene": "scene_09_village_intro",
+          "consequences": [
+            {
+              "type": "start_objective",
+              "objective_id": "obj_5_optional_investigate"
+            }
+          ]
+        },
+        {
+          "id": "decision_rest_first",
+          "text": "Descansar y prepararte antes de partir",
+          "next_scene": "scene_08d_rest",
+          "consequences": [
+            {
+              "type": "restore_wounds",
+              "amount": "full"
+            }
+          ]
+        }
+      ],
+      "atmosphere": "esperanzador, determinado",
+      "music_mood": "heroic"
+    },
+    "scene_09_village_intro": {
+      "id": "scene_09_village_intro",
+      "title": "Arroyo del Aullido",
+      "location": "arroyo_aullido_pueblo",
+      "narrative": "El pueblo es perturbador en su silencio. Nadie habla más fuerte que un susurro. Muchos aldeanos tienen bocas cosidas con hilo negro.\n\nUna figura alta y sin boca te observa desde el Templo del Silencio: Malakai, el Profeta Mudo. No dice nada (no puede), pero su presencia habla de poder y locura.",
+      "npcs_present": ["malakai_profeta", "gregor_tabernero"],
+      "decisions": [
+        {
+          "id": "decision_talk_bartender",
+          "text": "Hablar con Gregor en la Taberna del Eco Roto",
+          "next_scene": "scene_10_bartender_info",
+          "consequences": []
+        },
+        {
+          "id": "decision_confront_temple",
+          "text": "Confrontar directamente el Templo del Silencio",
+          "next_scene": "scene_10b_temple_confrontation",
+          "consequences": [
+            {
+              "type": "start_combat",
+              "enemies": ["guardia_silencio", "guardia_silencio"]
+            }
+          ]
+        },
+        {
+          "id": "decision_explore_mines",
+          "text": "Investigar las Minas Abandonadas",
+          "next_scene": "scene_10c_mines_entrance",
+          "consequences": []
+        }
+      ],
+      "atmosphere": "perturbador, silencioso",
+      "music_mood": "ominous"
+    },
+    "scene_10_bartender_info": {
+      "id": "scene_10_bartender_info",
+      "title": "Rumores en la Taberna",
+      "location": "arroyo_aullido_pueblo",
+      "narrative": "Gregor, el tabernero, es un hombre cansado con ojos hundidos. Te sirve una bebida aguada y habla en voz baja.\n\n'La gente empezó a desaparecer hace tres meses. Primero los mineros, luego cualquiera que hiciera demasiadas preguntas. Algunos regresaron... pero diferentes. Sin voz. Sin voluntad.'\n\n'Hay algo en las minas. Algo que cose. Si quieres ayudar, empieza por ahí. Pero...' Se detiene. 'No vayas solo.'",
+      "npcs_present": ["gregor_tabernero"],
+      "decisions": [
+        {
+          "id": "decision_go_mines",
+          "text": "Ir a las Minas Abandonadas",
+          "next_scene": "scene_11_mines_dungeon",
+          "consequences": [
+            {
+              "type": "start_objective",
+              "objective_id": "obj_6_optional_boss"
+            }
+          ]
+        },
+        {
+          "id": "decision_gather_help",
+          "text": "Intentar reunir ayuda del pueblo primero",
+          "next_scene": "scene_10d_gather_allies",
+          "requirements": {
+            "attribute": "SAB",
+            "difficulty": 8
+          },
+          "consequences": []
+        }
+      ],
+      "atmosphere": "informativo, ominoso",
+      "music_mood": "investigation"
+    },
+    "scene_11_mines_dungeon": {
+      "id": "scene_11_mines_dungeon",
+      "title": "Las Minas Abandonadas",
+      "location": "minas_abandonadas",
+      "narrative": "Los túneles son oscuros y húmedos. Se escuchan susurros que no provienen de ninguna garganta viva. Herramientas oxidadas y cascos abandonados yacen por todas partes.\n\nEn las profundidades, encuentras una cámara ritual. Y en su centro, una abominación: el Coleccionista de Voces. Un ser humanoide cubierto de bocas cosidas, sosteniendo una aguja de hueso. Frascos de cristal llenos de algo que parece aliento luminoso cuelgan de su cinturón.",
+      "npcs_present": [],
+      "boss": "coleccionista_voces",
+      "decisions": [
+        {
+          "id": "decision_fight_collector",
+          "text": "Luchar contra el Coleccionista de Voces",
+          "next_scene": "scene_12_boss_battle",
+          "consequences": [
+            {
+              "type": "start_boss_combat",
+              "boss": "coleccionista_voces"
+            }
+          ]
+        },
+        {
+          "id": "decision_escape_mines",
+          "text": "Huir de las minas antes de que te vea",
+          "next_scene": "scene_11b_escape",
+          "requirements": {
+            "attribute": "AGI",
+            "difficulty": 9
+          },
+          "consequences": []
+        }
+      ],
+      "atmosphere": "aterrador, claustrofóbico",
+      "music_mood": "boss_intro"
+    },
+    "scene_12_boss_battle": {
+      "id": "scene_12_boss_battle",
+      "title": "El Coleccionista Cae",
+      "location": "minas_abandonadas",
+      "narrative": "Con un último golpe, el Coleccionista de Voces se desploma. Su cuerpo se disuelve en ceniza negra, dejando atrás solo los frascos de voces robadas y una aguja de hueso inacabada.\n\nLos frascos comienzan a brillar y luego se rompen, liberando ecos de voces que flotan hacia arriba, buscando a sus dueños. Tal vez, solo tal vez, algunas de esas personas recuperarán lo que perdieron.",
+      "npcs_present": [],
+      "items_received": ["laringe_cristal", "aguja_hueso_inacabada"],
+      "decisions": [
+        {
+          "id": "decision_return_hermit",
+          "text": "Regresar con el Eremita del Eco",
+          "next_scene": "scene_13_epilogue",
+          "consequences": [
+            {
+              "type": "complete_objective",
+              "objective_id": "obj_6_optional_boss"
+            }
+          ]
+        }
+      ],
+      "atmosphere": "victorioso, sombrío",
+      "music_mood": "victory"
+    },
+    "scene_13_epilogue": {
+      "id": "scene_13_epilogue",
+      "title": "Ecos de un Nuevo Comienzo",
+      "location": "cueva_aislada",
+      "narrative": "El Eremita examina los artefactos que recuperaste con expresión grave pero esperanzada.\n\n'Has dado el primer paso', dice. 'El Culto del Silencio ha sido debilitado aquí, pero no derrotado. El Velo todavía se expande. Y ahora... ahora eres parte de esta lucha, te guste o no.'\n\nTe mira directamente. 'La pregunta es: ¿qué harás con esta nueva verdad?'\n\n[FIN DEL PRÓLOGO]\n[La aventura continúa...]",
+      "npcs_present": ["eremita_eco"],
+      "decisions": [],
+      "atmosphere": "conclusivo, expectante",
+      "music_mood": "credits"
+    }
+  }
+}

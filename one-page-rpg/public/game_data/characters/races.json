@@ -1,0 +1,17 @@
+{
+  "races": {
+    "human": {
+      "id": "human",
+      "name": "Humano",
+      "description": "Resilientes, desesperados y atrapados en medio del conflicto. Su mayor fortaleza y debilidad es su voluntad de sobrevivir a cualquier precio.",
+      "base_attributes": {
+        "FUE": 0,
+        "AGI": 0,
+        "SAB": 0,
+        "SUE": 0
+      },
+      "traits": ["adaptable", "determined"],
+      "cultures": ["fronterizo", "ciudadano", "superviviente"]
+    }
+  }
+}

@@ -1,0 +1,156 @@
+{
+  "quest": {
+    "id": "prologo_deuda_ecos",
+    "title": "La Deuda del Ladrón de Ecos",
+    "type": "main_quest",
+    "level_range": [1, 3],
+    "giver": "alenko_la_rata",
+    "starting_location": "murogris_guarida_alenko",
+    "description": "Debes entregar una caja sellada a un ermitaño en las montañas para saldar tu deuda con 'La Rata' Alenko. Pero hay algo muy mal con esta caja...",
+    "objectives": [
+      {
+        "id": "obj_1_accept_job",
+        "type": "talk",
+        "description": "Hablar con Alenko y aceptar el trabajo",
+        "required": true,
+        "completed": false,
+        "rewards": {
+          "xp": 0
+        }
+      },
+      {
+        "id": "obj_2_survive_ambush",
+        "type": "combat",
+        "description": "Sobrevivir a la emboscada en el Camino de Montaña",
+        "required": true,
+        "completed": false,
+        "location": "camino_montana",
+        "enemies": ["maton_generico", "maton_generico"],
+        "rewards": {
+          "xp": 1
+        }
+      },
+      {
+        "id": "obj_3_deliver_box",
+        "type": "delivery",
+        "description": "Entregar la caja al Eremita del Eco",
+        "required": true,
+        "completed": false,
+        "location": "cueva_aislada",
+        "item": "caja_sellada_velo",
+        "target_npc": "eremita_eco",
+        "rewards": {
+          "xp": 1
+        }
+      },
+      {
+        "id": "obj_4_learn_truth",
+        "type": "talk",
+        "description": "Descubrir la verdad sobre el Velo y la Plaga",
+        "required": true,
+        "completed": false,
+        "location": "cueva_aislada",
+        "target_npc": "eremita_eco",
+        "rewards": {
+          "xp": 0
+        }
+      },
+      {
+        "id": "obj_5_optional_investigate",
+        "type": "explore",
+        "description": "[OPCIONAL] Investigar Arroyo del Aullido y el Culto del Silencio",
+        "required": false,
+        "completed": false,
+        "location": "arroyo_aullido_pueblo",
+        "rewards": {
+          "xp": 1
+        }
+      },
+      {
+        "id": "obj_6_optional_boss",
+        "type": "combat",
+        "description": "[OPCIONAL] Derrotar al Coleccionista de Voces en las Minas",
+        "required": false,
+        "completed": false,
+        "location": "minas_abandonadas",
+        "boss": "coleccionista_voces",
+        "rewards": {
+          "xp": 2,
+          "items": ["laringe_cristal", "aguja_hueso_inacabada"]
+        }
+      }
+    ],
+    "branches": [
+      {
+        "id": "branch_betray_hermit",
+        "trigger": "decision_traicionar_eremita",
+        "description": "Traicionar al Eremita y vender la información a Alenko",
+        "consequences": [
+          {
+            "type": "relationship",
+            "target": "circulo_eco",
+            "value": -50
+          },
+          {
+            "type": "relationship",
+            "target": "alenko_la_rata",
+            "value": 30
+          },
+          {
+            "type": "reward",
+            "gold": 100
+          },
+          {
+            "type": "unlock_quest",
+            "quest_id": "sombra_alenko"
+          }
+        ]
+      },
+      {
+        "id": "branch_help_hermit",
+        "trigger": "decision_ayudar_eremita",
+        "description": "Ayudar al Eremita y unirse al Círculo del Eco",
+        "consequences": [
+          {
+            "type": "relationship",
+            "target": "circulo_eco",
+            "value": 50
+          },
+          {
+            "type": "relationship",
+            "target": "alenko_la_rata",
+            "value": -50
+          },
+          {
+            "type": "reward",
+            "items": ["amuleto_resonancia"]
+          },
+          {
+            "type": "unlock_quest",
+            "quest_id": "busqueda_corazon_resonante"
+          }
+        ]
+      }
+    ],
+    "rewards": {
+      "base": {
+        "xp": 3,
+        "gold": 50
+      },
+      "optional_bonus": {
+        "xp": 3,
+        "items": ["pocion_curacion", "pocion_curacion"]
+      }
+    },
+    "failure_conditions": [
+      {
+        "condition": "player_death",
+        "result": "game_over"
+      },
+      {
+        "condition": "box_destroyed",
+        "result": "alternate_ending"
+      }
+    ]
+  }
+}

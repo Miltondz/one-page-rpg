@@ -1,0 +1,53 @@
+{
+  "worlds": {
+    "griswald": {
+      "id": "griswald",
+      "name": "Griswald, la Baronía Fronteriza",
+      "description": "Una tierra moribunda y aislada, perpetuamente nublada y atrapada en un otoño eterno, donde la magia del Canto se desvanece y viejos horrores despiertan.",
+      "type": "dark_fantasy",
+      "factions": [
+        {
+          "id": "casa_von_hess",
+          "name": "Casa Von Hess",
+          "alignment": "lawful_evil",
+          "goal": "Controlar el poder del Silencio para imponer un orden absoluto.",
+          "relationships": {
+            "culto_silencio": -10,
+            "circulo_eco": -50
+          }
+        },
+        {
+          "id": "culto_silencio",
+          "name": "El Culto del Silencio",
+          "alignment": "chaotic_neutral",
+          "goal": "Ayudar a la Plaga a consumir el mundo, creyendo que es una purificación divina.",
+          "relationships": {
+            "casa_von_hess": -10,
+            "circulo_eco": -80
+          }
+        },
+        {
+          "id": "circulo_eco",
+          "name": "El Círculo del Eco",
+          "alignment": "neutral_good",
+          "goal": "Encontrar el Corazón Resonante para restaurar el Canto y detener al Velo.",
+          "relationships": {
+            "casa_von_hess": -50,
+            "culto_silencio": -80
+          }
+        }
+      ],
+      "global_conflicts": [
+        "La Plaga del Silencio se expande, robando la voz y la voluntad de la gente.",
+        "El Velo, una dimensión de entropía, se está filtrando en la realidad.",
+        "El Barón Von Hess explota la crisis para afianzar su poder."
+      ],
+      "magic_system": {
+        "type": "dualistic",
+        "description": "El mundo está regido por la lucha entre la Magia Resonante (vida, sonido) y la Entropía Silente (vacío, olvido).",
+        "schools": ["resonancia", "silencio"],
+        "limitations": ["agotamiento", "corrupcion", "consecuencias"]
+      }
+    }
+  }
+}

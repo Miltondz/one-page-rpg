@@ -1,0 +1,18 @@
+{
+  "classes": {
+    "adventurer": {
+      "id": "adventurer",
+      "name": "Aventurero",
+      "description": "Un alma errante, marcada por el destino, que debe usar su ingenio, fuerza y suerte para navegar por un mundo que se desmorona.",
+      "primary_attributes": ["FUE", "AGI", "SAB", "SUE"],
+      "starting_equipment": [
+        "espada_simple",
+        "daga_rapida",
+        "baston_nudoso",
+        "arco_caza",
+        "grimorio_basico",
+        "amuleto_suerte"
+      ]
+    }
+  }
+}

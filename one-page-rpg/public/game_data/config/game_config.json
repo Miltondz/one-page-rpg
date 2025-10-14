@@ -1,0 +1,31 @@
+{
+  "game": {
+    "name": "One Page RPG - Solo Adventure",
+    "version": "1.0.0",
+    "default_world": "griswald",
+    "starting_level": 1,
+    "max_level": 10
+  },
+  "mechanics": {
+    "attributes": ["FUE", "AGI", "SAB", "SUE"],
+    "base_wounds": 3,
+    "base_fatigue": 3,
+    "xp_per_level": 3,
+    "inventory_slots": 10,
+    "starting_gold": 0
+  },
+  "difficulty_settings": {
+    "easy": {
+      "enemy_health_multiplier": 0.8,
+      "reward_multiplier": 0.8
+    },
+    "normal": {
+      "enemy_health_multiplier": 1.0,
+      "reward_multiplier": 1.0
+    },
+    "hard": {
+      "enemy_health_multiplier": 1.3,
+      "reward_multiplier": 1.2
+    }
+  }
+}
