@@ -5,14 +5,18 @@
 import type { Merchant, Transaction, TransactionResult } from '../types/merchant';
 import type { Item } from '../types';
 import type { GameCatalog } from '../types/catalog';
+import { ReputationSystem, type Reputation } from './ReputationSystem';
+import type { NPCMemory } from './NPCMemorySystem';
 
 export class EconomySystem {
   private merchants: Map<string, Merchant> = new Map();
   private catalog: GameCatalog;
   private transactions: Transaction[] = [];
+  private reputationSystem: ReputationSystem;
 
   constructor(catalog: GameCatalog) {
     this.catalog = catalog;
+    this.reputationSystem = new ReputationSystem();
   }
 
   /**
@@ -25,7 +29,12 @@ export class EconomySystem {
   /**
    * Calcula el precio de compra de un item
    */
-  calculateBuyPrice(itemId: string, merchantId: string, reputation: number = 0): number {
+  calculateBuyPrice(
+    itemId: string,
+    merchantId: string,
+    factionReputation: Reputation,
+    npcMemory?: NPCMemory
+  ): number {
     const item = this.catalog.items[itemId];
     const merchant = this.merchants.get(merchantId);
     
@@ -33,10 +42,14 @@ export class EconomySystem {
 
     let price = item.value * merchant.priceModifier;
 
-    // Aplicar descuento por reputación
-    if (merchant.reputationDiscount && reputation > 0) {
-      const discount = reputation * merchant.reputationDiscount.discountPerPoint;
-      price *= (1 - Math.min(discount, 0.5)); // Max 50% descuento
+    // Aplicar modificadores de reputación usando ReputationSystem
+    if (merchant.reputationDiscount?.faction) {
+      const modifiers = this.reputationSystem.getPriceModifiers(
+        merchant.reputationDiscount.faction,
+        factionReputation,
+        npcMemory
+      );
+      price *= modifiers.buyModifier;
     }
 
     return Math.ceil(price);
@@ -45,14 +58,31 @@ export class EconomySystem {
   /**
    * Calcula el precio de venta de un item
    */
-  calculateSellPrice(itemId: string, merchantId: string): number {
+  calculateSellPrice(
+    itemId: string,
+    merchantId: string,
+    factionReputation: Reputation,
+    npcMemory?: NPCMemory
+  ): number {
     const item = this.catalog.items[itemId];
     const merchant = this.merchants.get(merchantId);
     
     if (!item || !merchant) return 0;
 
-    // Los comerciantes compran al 50% del valor base
-    return Math.floor(item.value * 0.5);
+    // Precio base: comerciantes compran al 50% del valor
+    let price = item.value * 0.5;
+
+    // Aplicar modificadores de reputación usando ReputationSystem
+    if (merchant.reputationDiscount?.faction) {
+      const modifiers = this.reputationSystem.getPriceModifiers(
+        merchant.reputationDiscount.faction,
+        factionReputation,
+        npcMemory
+      );
+      price *= modifiers.sellModifier;
+    }
+
+    return Math.floor(price);
   }
 
   /**
@@ -62,7 +92,8 @@ export class EconomySystem {
     itemId: string,
     merchantId: string,
     playerGold: number,
-    reputation: number = 0
+    factionReputation: Reputation,
+    npcMemory?: NPCMemory
   ): TransactionResult {
     const merchant = this.merchants.get(merchantId);
     const item = this.catalog.items[itemId];
@@ -73,7 +104,7 @@ export class EconomySystem {
       return { success: false, message: 'Este comerciante no vende este item' };
     }
 
-    const price = this.calculateBuyPrice(itemId, merchantId, reputation);
+    const price = this.calculateBuyPrice(itemId, merchantId, factionReputation, npcMemory);
 
     if (playerGold < price) {
       return { success: false, message: 'No tienes suficiente oro' };
@@ -101,7 +132,12 @@ export class EconomySystem {
   /**
    * Procesa una venta
    */
-  sellItem(itemId: string, merchantId: string): TransactionResult {
+  sellItem(
+    itemId: string,
+    merchantId: string,
+    factionReputation: Reputation,
+    npcMemory?: NPCMemory
+  ): TransactionResult {
     const merchant = this.merchants.get(merchantId);
     const item = this.catalog.items[itemId];
 
@@ -113,7 +149,7 @@ export class EconomySystem {
       return { success: false, message: 'Este comerciante no compra este tipo de item' };
     }
 
-    const price = this.calculateSellPrice(itemId, merchantId);
+    const price = this.calculateSellPrice(itemId, merchantId, factionReputation, npcMemory);
 
     if (merchant.gold < price) {
       return { success: false, message: 'El comerciante no tiene suficiente oro' };
@@ -145,6 +181,63 @@ export class EconomySystem {
 
   getTransactionHistory(): Transaction[] {
     return [...this.transactions];
+  }
+
+  /**
+   * Obtener el sistema de reputación subyacente
+   */
+  getReputationSystem(): ReputationSystem {
+    return this.reputationSystem;
+  }
+
+  /**
+   * Verificar si el mercader aceptará comerciar
+   * basado en reputación y memoria de NPC
+   */
+  willMerchantTrade(
+    merchantId: string,
+    factionReputation: Reputation,
+    npcMemory?: NPCMemory
+  ): { willTrade: boolean; reason?: string } {
+    const merchant = this.merchants.get(merchantId);
+    if (!merchant) {
+      return { willTrade: false, reason: 'Comerciante no encontrado' };
+    }
+
+    // Si el mercader no tiene faccion asignada, siempre comercia
+    if (!merchant.reputationDiscount?.faction) {
+      return { willTrade: true };
+    }
+
+    // Calcular actitud basada en reputación
+    // Crear un NPC temporal para usar el sistema de reputación
+    const tempNPC = {
+      id: merchantId,
+      name: merchant.name,
+      location: merchant.location,
+      faction: merchant.reputationDiscount.faction,
+      role: 'merchant',
+      state: 'available' as const,
+    };
+
+    const attitude = this.reputationSystem.calculateNPCAttitude(
+      tempNPC,
+      factionReputation,
+      npcMemory
+    );
+
+    const willTrade = this.reputationSystem.willTrade(attitude, 'merchant');
+
+    if (!willTrade) {
+      return {
+        willTrade: false,
+        reason: attitude === 'hostile'
+          ? `${merchant.name} se niega a comerciar contigo debido a tu reputación.`
+          : `${merchant.name} no confía en ti lo suficiente para comerciar.`,
+      };
+    }
+
+    return { willTrade: true };
   }
 }
 

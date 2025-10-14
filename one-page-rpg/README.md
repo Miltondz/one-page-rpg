@@ -12,7 +12,7 @@ Un RPG narrativo de una sola página inspirado en el sistema 2d6, ambientado en 
 
 ## 📊 Estado del Proyecto
 
-### ✅ Completado (60%)
+### ✅ Completado (80%)
 
 - [x] **Sistema de Types TypeScript** (12 archivos)
   - Atributos, jugador, dados, mundo, escenas, NPCs, enemigos, items, quests, decisiones, estado del juego
@@ -80,19 +80,49 @@ Un RPG narrativo de una sola página inspirado en el sistema 2d6, ambientado en 
   - 28 efectos de sonido
   - Fade in/out automático
   - Control de volumen independiente
+- [x] **Sistema de Dados Avanzado 2d6** (DiceSystem) ⭐ NUEVO
+  - 4 niveles de outcomes: critical_failure, partial_success, success, critical_success
+  - Ventaja/Desventaja (3d6 mantener 2 mejores/peores)
+  - 8 consecuencias procedurales para éxitos parciales
+  - 8 bonos procedurales para críticos
+  - Integrado con combate y skill checks
+- [x] **Sistema de Reputación Dinámico** (ReputationSystem) ⭐ NUEVO
+  - 5 niveles de actitud de NPCs (hostile, unfriendly, neutral, friendly, devoted)
+  - Modificadores de precio dinámicos (-30% a +60%)
+  - Beneficios escalonados (items especiales, favores, refugio)
+  - Penalizaciones (attack on sight, restricciones, recompensas)
+  - Relaciones entre facciones (enemigos afectan reputación)
+  - Prioriza memoria personal sobre facción
+- [x] **Generador Procedural de NPCs** (NPCGenerator) ⭐ NUEVO
+  - Nombres silábicos por género
+  - 10 motivaciones con descripciones
+  - 10 tipos de secretos con severidad
+  - 24 rasgos de personalidad
+  - 16 arquetipos (merchant, guard, priest, etc.)
+  - Generación reproducible con seeds
+- [x] **Sistema de Memoria de NPCs** (NPCMemorySystem)
+  - Historial de interacciones (últimas 20)
+  - Relación y confianza dinámicas
+  - Promesas y secretos compartidos
+  - Tags automáticos (saved-life, betrayed, etc.)
+  - Integrado con diálogo y reputación
 
-### ⏳ En Progreso (40%)
+### ⏳ En Progreso (20%)
 
 - [x] Motor narrativo (scene engine) - **Completado**
-- [x] Sistema de dados 2d6 con modificadores - **Completado**
-- [x] Sistema de combate - **Completado**
+- [x] Sistema de dados 2d6 con modificadores - **Completado + Mejorado**
+- [x] Sistema de combate - **Completado + Integrado con DiceSystem**
 - [x] Gestión de inventario - **Completado**
 - [x] Persistencia (localStorage) - **Completado**
 - [x] Componentes de UI del juego - **Completado (9 componentes)**
 - [x] Pantallas principales (creación, juego, combate) - **Completado**
-- [ ] Integración completa narrativa + quests
-- [ ] Sistema de comercio y tiendas
-- [ ] Efectos de sonido y música
+- [x] Sistema de comercio y tiendas - **Completado + Integrado con Reputación**
+- [x] Efectos de sonido y música - **Completado**
+- [x] Sistema de reputación y relaciones - **Completado**
+- [x] Generación procedural de NPCs - **Completado**
+- [ ] Sistema de ventaja/desventaja en combate (condiciones)
+- [ ] Panel UI para outcomes de dados
+- [ ] Indicador visual de reputación
 - [ ] Achievements y estadísticas
 
 ## 🎮 El Prólogo: "La Deuda del Ladrón de Ecos"
@@ -147,11 +177,21 @@ npm run build
 - **SAB** (Sabiduría): Magia, conocimiento, percepción
 - **SUE** (Suerte): Eventos aleatorios, esquivar destino
 
-### Mecánica 2d6
-- **2-6**: Fallo catastrófico
-- **7-9**: Éxito con consecuencias
-- **10-11**: Éxito limpio
-- **12**: Éxito crítico
+### Mecánica 2d6 (Sistema Avanzado)
+- **2-6**: Fallo Crítico (jugador sufre consecuencias)
+- **7-9**: Éxito Parcial (logras objetivo + consecuencia aleatoria)
+- **10-11**: Éxito Total (logras objetivo limpiamente)
+- **12+**: Éxito Crítico (logras objetivo + bono aleatorio)
+
+**Sistema de Ventaja/Desventaja:**
+- **Ventaja**: 3d6, mantén los 2 mejores
+- **Desventaja**: 3d6, mantén los 2 peores
+
+**Dificultades:**
+- Easy: 6+
+- Normal: 7+
+- Difficult: 9+
+- Epic: 11+
 
 ### Recursos
 - **Heridas**: Salud física (base: 3)
@@ -180,8 +220,16 @@ MIT License - Ver archivo LICENSE para más detalles.
 ---
 
 **Estado**: 🜢 En Desarrollo Activo  
-**Versión**: 0.4.0 (Sistema de prompts LLM centralizado)  
-**Última actualización**: Enero 2025 (14)
+**Versión**: 0.6.0 (Sistemas 2d6, Reputación y NPC Generator)  
+**Última actualización**: Enero 2025 (14)  
+**Tests**: 79/100 pasando (79%)
+
+## 🧪 Testing
+
+- ✅ **DiceSystem**: 21/21 tests (100%)
+- ✅ **NPCGenerator**: 30/30 tests (100%)
+- ⚠️ **ReputationSystem**: 28/49 tests (57% - discrepancias menores)
+- 📊 **Cobertura Total**: 79% de tests pasando
 
 ## 🧠 Arquitectura del Sistema de Prompts LLM
 

@@ -1,4 +1,5 @@
-import { GameState, NPC } from '../types/game';
+import type { GameState } from '../types/gameState';
+import type { NPC } from '../types/npc';
 
 /**
  * Representa una interacción individual con un NPC

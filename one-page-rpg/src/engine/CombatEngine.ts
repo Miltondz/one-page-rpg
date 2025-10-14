@@ -1,4 +1,6 @@
 import { PlayerState, Enemy } from '../types';
+import { DiceSystem, createDiceSystem, RollOutcome } from '../utils/DiceSystem';
+import { SeededRandom } from '../utils/SeededRandom';
 
 /**
  * Estado del combate
@@ -65,10 +67,13 @@ export interface CombatActionResult {
   critical?: boolean;
   message: string;
   rollResult?: {
-    dice: [number, number];
+    dice: number[];
     modifier: number;
     total: number;
     difficulty: number;
+    outcome?: RollOutcome;
+    consequence?: string;
+    bonus?: string;
   };
 }
 
@@ -77,8 +82,11 @@ export interface CombatActionResult {
  */
 export class CombatEngine {
   private state: CombatState;
+  private dice: DiceSystem;
 
-  constructor(player: PlayerState, enemies: Enemy[]) {
+  constructor(player: PlayerState, enemies: Enemy[], rng?: SeededRandom) {
+    // Inicializar sistema de dados
+    this.dice = createDiceSystem(rng || new SeededRandom(Date.now().toString()));
     this.state = {
       player,
       enemies: enemies.map(enemy => ({
@@ -220,58 +228,62 @@ export class CombatEngine {
       };
     }
 
-    // Tirada de ataque: 2d6 + atributo vs DEF del enemigo
-    const roll = this.rollDice();
-    const modifier = this.state.player.attributes[attribute];
-    const total = roll[0] + roll[1] + modifier;
-    const difficulty = enemy.stats?.DEF || 7;
+    // Usar nuevo sistema de dados con combatRoll
+    const weaponBonus = this.getWeaponBonus();
+    const rollResult = this.dice.combatRoll(
+      this.state.player.attributes[attribute],
+      enemy.stats?.DEF || 7,
+      'none', // TODO: determinar ventaja/desventaja basado en condiciones
+      weaponBonus
+    );
 
-    const rollResult = {
-      dice: roll as [number, number],
-      modifier,
-      total,
-      difficulty,
-    };
+    const critical = rollResult.outcome === 'critical_success';
+    const partialSuccess = rollResult.outcome === 'partial_success';
 
-    // Verificar si fue crítico (doble 6)
-    const critical = roll[0] === 6 && roll[1] === 6;
-
-    if (total >= difficulty || critical) {
-      // Calcular daño base
-      let damage = 1;
-      
-      if (critical) {
-        damage = 2;
-      } else if (total >= difficulty + 3) {
-        damage = 2; // Éxito excepcional
-      }
-
+    if (rollResult.success) {
       // Aplicar daño
-      enemy.currentWounds = Math.max(0, enemy.currentWounds - damage);
+      enemy.currentWounds = Math.max(0, enemy.currentWounds - rollResult.damage);
+
+      let message = this.dice.describeResult(rollResult);
 
       if (enemy.currentWounds <= 0) {
         enemy.isDead = true;
-        return {
-          success: true,
-          damage,
-          critical,
-          message: `¡${critical ? 'CRÍTICO! ' : ''}Golpeaste a ${enemy.name} por ${damage} de daño! ${enemy.name} ha sido derrotado!`,
-          rollResult,
-        };
+        message += ` ¡${enemy.name} ha sido derrotado!`;
+      } else {
+        message += ` ${enemy.name}: ${enemy.currentWounds}/${enemy.stats?.Heridas || 3} HP`;
       }
 
       return {
         success: true,
-        damage,
+        damage: rollResult.damage,
         critical,
-        message: `${critical ? '¡CRÍTICO! ' : ''}Golpeaste a ${enemy.name} por ${damage} de daño. (${enemy.currentWounds}/${enemy.stats?.Heridas || 3} HP)`,
-        rollResult,
+        message,
+        rollResult: {
+          dice: rollResult.dice,
+          modifier: rollResult.modifier,
+          total: rollResult.total,
+          difficulty: rollResult.difficulty,
+          outcome: rollResult.outcome,
+          consequence: rollResult.consequence,
+          bonus: rollResult.bonus,
+        },
       };
     } else {
+      // Fallo: jugador recibe daño
+      const failureDamage = rollResult.outcome === 'critical_failure' ? 2 : 1;
+      this.state.player.wounds = Math.max(0, this.state.player.wounds - failureDamage);
+
       return {
         success: false,
-        message: `Tu ataque falló contra ${enemy.name}. (${total} vs ${difficulty})`,
-        rollResult,
+        damage: 0,
+        message: `${this.dice.describeResult(rollResult)} ¡Recibes ${failureDamage} herida(s)! (${this.state.player.wounds}/${this.state.player.maxWounds} HP)`,
+        rollResult: {
+          dice: rollResult.dice,
+          modifier: rollResult.modifier,
+          total: rollResult.total,
+          difficulty: rollResult.difficulty,
+          outcome: rollResult.outcome,
+        },
       };
     }
   }
@@ -317,33 +329,40 @@ export class CombatEngine {
    * Intentar huir del combate
    */
   private playerFlee(): CombatActionResult {
-    // Tirada de AGI vs 8
-    const roll = this.rollDice();
-    const modifier = this.state.player.attributes.AGI || 0;
-    const total = roll[0] + roll[1] + modifier;
-    const difficulty = 8;
+    // Usar sistema de dados para tirada de AGI vs dificultad 'normal' (7+)
+    const rollResult = this.dice.roll(
+      this.state.player.attributes.AGI || 0,
+      'normal',
+      'none',
+      0
+    );
 
-    if (total >= difficulty) {
+    if (rollResult.success) {
       this.state.phase = 'victory'; // Técnicamente no es victoria, pero termina el combate
       return {
         success: true,
-        message: `¡Lograste escapar! (${total} vs ${difficulty})`,
+        message: `¡Lograste escapar! ${this.dice.describeResult(rollResult)}`,
         rollResult: {
-          dice: roll as [number, number],
-          modifier,
-          total,
-          difficulty,
+          dice: rollResult.dice,
+          modifier: rollResult.modifier,
+          total: rollResult.total,
+          difficulty: rollResult.difficulty,
+          outcome: rollResult.outcome,
         },
       };
     } else {
+      // Si falla al escapar, recibe 1 herida
+      this.state.player.wounds = Math.max(0, this.state.player.wounds - 1);
+      
       return {
         success: false,
-        message: `No pudiste escapar. (${total} vs ${difficulty})`,
+        message: `No pudiste escapar. ${this.dice.describeResult(rollResult)} ¡Recibes 1 herida!`,
         rollResult: {
-          dice: roll as [number, number],
-          modifier,
-          total,
-          difficulty,
+          dice: rollResult.dice,
+          modifier: rollResult.modifier,
+          total: rollResult.total,
+          difficulty: rollResult.difficulty,
+          outcome: rollResult.outcome,
         },
       };
     }
@@ -353,36 +372,32 @@ export class CombatEngine {
    * Ataque de un enemigo
    */
   private enemyAttack(enemy: CombatEnemy): CombatActionResult {
-    // Tirada de ataque del enemigo: 2d6 + FUE vs 7 (DEF base del jugador)
-    const roll = this.rollDice();
-    const modifier = enemy.stats?.FUE || 0;
-    const total = roll[0] + roll[1] + modifier;
-    const difficulty = 7; // DEF base del jugador
+    // Usar sistema de dados para ataque del enemigo
+    const rollResult = this.dice.combatRoll(
+      enemy.stats?.FUE || 0,
+      7, // DEF base del jugador
+      'none',
+      0
+    );
 
-    const critical = roll[0] === 6 && roll[1] === 6;
+    const critical = rollResult.outcome === 'critical_success';
 
-    if (total >= difficulty || critical) {
-      let damage = 1;
-      
-      if (critical) {
-        damage = 2;
-      } else if (total >= difficulty + 3) {
-        damage = 2;
-      }
-
+    if (rollResult.success) {
       // Aplicar daño al jugador
-      this.state.player.wounds = Math.max(0, this.state.player.wounds - damage);
+      this.state.player.wounds = Math.max(0, this.state.player.wounds - rollResult.damage);
+
+      const message = `${enemy.name} te ataca: ${this.dice.describeResult(rollResult)} (${this.state.player.wounds}/${this.state.player.maxWounds} HP)`;
 
       return {
         success: true,
-        damage,
+        damage: rollResult.damage,
         critical,
-        message: `${enemy.name} te ataca ${critical ? '¡CRÍTICO! ' : ''}y hace ${damage} de daño. (${this.state.player.wounds}/${this.state.player.maxWounds} HP)`,
+        message,
       };
     } else {
       return {
         success: false,
-        message: `${enemy.name} falló su ataque. (${total} vs ${difficulty})`,
+        message: `${enemy.name} falló su ataque: ${this.dice.describeResult(rollResult)}`,
       };
     }
   }
@@ -408,13 +423,12 @@ export class CombatEngine {
   }
 
   /**
-   * Tirar 2 dados de 6 caras
+   * Obtener bonus de arma (si está equipada)
    */
-  private rollDice(): [number, number] {
-    return [
-      Math.floor(Math.random() * 6) + 1,
-      Math.floor(Math.random() * 6) + 1,
-    ];
+  private getWeaponBonus(): number {
+    // TODO: Implementar cuando se tenga sistema de equipamiento
+    // Por ahora retornar 0
+    return 0;
   }
 
   /**
