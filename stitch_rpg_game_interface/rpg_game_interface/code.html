@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Retro RPG</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#A855F7",
+            "background-dark": "#262223",
+            "panel-bg": "#3a3536",
+            "panel-border": "#554c4d",
+            "text-main": "#e5e0e1",
+            "text-muted": "#928587",
+            "hp-bar": "#ef4444",
+            "mp-bar": "#3b82f6",
+            "exp-bar": "#f59e0b",
+          },
+          fontFamily: {
+            display: ["'Press Start 2P'", "cursive"],
+          },
+          borderRadius: {
+            DEFAULT: "0",
+          },
+          borderWidth: {
+            DEFAULT: "2px",
+            '3': '3px',
+            '4': '4px',
+          },
+          boxShadow: {
+            'pixel': '2px 2px 0px 0px rgba(0,0,0,0.5)',
+            'pixel-inset': 'inset 2px 2px 0px 0px rgba(0,0,0,0.25)',
+          }
+        },
+      },
+    };
+  </script>
+<style>
+    body {
+      font-family: 'Press Start 2P', cursive;
+      background-color: #262223;
+      color: #e5e0e1;
+      font-size: 10px;
+    }
+    .scanline-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%),
+        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+      background-size: 100% 3px, 4px 100%;
+      z-index: 9999;
+      animation: chromatic-aberration 0.05s infinite;
+    }
+    @keyframes chromatic-aberration {
+      0% {
+        background-position: 0px 0px, 0px 0px;
+      }
+      25% {
+        background-position: 0px 0px, 1px 0px;
+      }
+      50% {
+        background-position: 0px 0px, 1px 1px;
+      }
+      75% {
+        background-position: 0px 0px, 0px 1px;
+      }
+      100% {
+        background-position: 0px 0px, 0px 0px;
+      }
+    }
+    .pixel-border {
+      border: 2px solid #554c4d;
+      box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.5);
+    }
+    .pixel-border-inset {
+       border: 2px solid #1a1718;
+       box-shadow: inset 2px 2px 0px 0px rgba(0,0,0,0.25);
+    }
+    .game-container-wrapper {
+      max-width: 960px;margin: auto;
+      image-rendering: pixelated;
+    }
+    .text-shadow {
+      text-shadow: 1px 1px 0px #1a1718;
+    }
+    .command-input::placeholder {
+        color: #928587;
+        opacity: 1;
+    }
+  </style>
+</head>
+<body class="bg-background-dark font-display">
+<div class="scanline-overlay"></div>
+<div class="game-container-wrapper">
+<div class="relative flex h-auto min-h-screen w-full flex-col pb-28">
+<div class="layout-container flex h-full grow flex-col">
+<div class="flex-1">
+<header class="flex items-center justify-between whitespace-nowrap border-b-4 border-panel-border bg-panel-bg px-4 py-2">
+<div class="flex items-center gap-3">
+<div class="size-8 text-primary">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.8261 30.5736C16.7203 29.8826 20.2244 29.4783 24 29.4783C27.7756 29.4783 31.2797 29.8826 34.1739 30.5736C36.9144 31.2278 39.9967 32.7669 41.3563 33.8352L24.8486 7.36089C24.4571 6.73303 23.5429 6.73303 23.1514 7.36089L6.64374 33.8352C8.00331 32.7669 11.0856 31.2278 13.8261 30.5736Z" fill="currentColor"></path>
+<path clip-rule="evenodd" d="M39.998 35.764C39.9944 35.7463 39.9875 35.7155 39.9748 35.6706C39.9436 35.5601 39.8949 35.4259 39.8346 35.2825C39.8168 35.2403 39.7989 35.1993 39.7813 35.1602C38.5103 34.2887 35.9788 33.0607 33.7095 32.5189C30.9875 31.8691 27.6413 31.4783 24 31.4783C20.3587 31.4783 17.0125 31.8691 14.2905 32.5189C12.0012 33.0654 9.44505 34.3104 8.18538 35.1832C8.17384 35.2075 8.16216 35.233 8.15052 35.2592C8.09919 35.3751 8.05721 35.4886 8.02977 35.589C8.00356 35.6848 8.00039 35.7333 8.00004 35.7388C8.00004 35.739 8 35.7393 8.00004 35.7388C8.00004 35.7641 8.0104 36.0767 8.68485 36.6314C9.34546 37.1746 10.4222 37.7531 11.9291 38.2772C14.9242 39.319 19.1919 40 24 40C28.8081 40 33.0758 40 36.0709 38.2772C37.5778 37.7531 38.6545 37.1746 39.3151 36.6314C39.9006 36.1499 39.9857 35.8511 39.998 35.764ZM4.95178 32.7688L21.4543 6.30267C22.6288 4.4191 25.3712 4.41909 26.5457 6.30267L43.0534 32.777C43.0709 32.8052 43.0878 32.8338 43.104 32.8629L41.3563 33.8352C43.104 32.8629 43.1038 32.8626 43.104 32.8629L43.1051 32.865L43.1065 32.8675L43.1101 32.8739L43.1199 32.8918C43.1276 32.906 43.1377 32.9246 43.1497 32.9473C43.1738 32.9925 43.2062 33.0545 43.244 33.1299C43.319 33.2792 43.4196 33.489 43.5217 33.7317C43.6901 34.1321 44 34.9311 44 35.7391C44 37.4427 43.003 38.7775 41.8558 39.7209C40.6947 40.6757 39.1354 41.4464 37.385 42.0552C33.8654 43.2794 29.133 44 24 44C18.867 44 14.1346 43.2794 10.615 42.0552C8.86463 41.4464 7.30529 40.6757 6.14419 39.7209C4.99695 38.7775 3.99999 37.4427 3.99999 35.7391C3.99999 34.8725 4.29264 34.0922 4.49321 33.6393C4.60375 33.3898 4.71348 33.1804 4.79687 33.0311C4.83898 32.9556 4.87547 32.8935 4.9035 32.8471C4.91754 32.8238 4.92954 32.8043 4.93916 32.7889L4.94662 32.777L4.95178 32.7688ZM35.9868 29.004L24 9.77997L12.0131 29.004C12.4661 28.8609 12.9179 28.7342 13.3617 28.6282C16.4281 27.8961 20.0901 27.4783 24 27.4783C27.9099 27.4783 31.5719 27.8961 34.6383 28.6282C35.082 28.7342 35.5339 28.8609 35.9868 29.004Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-text-main text-lg text-shadow">Retro RPG</h2>
+</div>
+<div class="flex items-center gap-4 text-xs">
+<div class="flex items-center gap-2">
+<p class="text-shadow text-text-main">HP:</p>
+<div class="w-24 h-3 bg-black/50 pixel-border-inset">
+<div class="h-full bg-hp-bar" style="width: 100%;"></div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<p class="text-shadow text-text-main">MP:</p>
+<div class="w-24 h-3 bg-black/50 pixel-border-inset">
+<div class="h-full bg-mp-bar" style="width: 100%;"></div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<p class="text-shadow text-text-main">EXP:</p>
+<div class="w-24 h-3 bg-black/50 pixel-border-inset">
+<div class="h-full bg-exp-bar" style="width: 62.5%;"></div>
+</div>
+</div>
+</div>
+</header>
+<main class="grid grid-cols-4 gap-4 p-4">
+<div class="col-span-1 space-y-4">
+<div class="bg-panel-bg p-3 pixel-border">
+<div class="flex flex-col items-center">
+<div class="bg-center bg-no-repeat aspect-square bg-cover h-32 w-32 mb-3 border-2 border-panel-border" data-alt="Pixel art portrait of a knight" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBdDlWD5ixcQxWqubiAt1cjhkpAofBSv8TKVIUoMdqvn9B2RBOewXTbnZcipdrYi1mukcXNDMZ2xrgbzPxnpx9wpW2lqgUnOjf2ZH5lcQjEAWeFf0oQ6WLLm0Y8b10yTWhBsMouVnbNOn25EGGTxMORIxOQzs_iQmQn7gwGjJENFlsYKz6CSCI_gknKjaVjSqW_x9vbxyhsgujyPyDMfcSu4zc1fu_kPwf1niiArVTBQoisldHLPms5KerMc62fUtyWvcHSIInV7A"); image-rendering: pixelated;'></div>
+<p class="text-text-main text-lg text-shadow">Sir Kael</p>
+<p class="text-text-muted">Lvl 10 Paladin</p>
+</div>
+<div class="mt-4 space-y-1 text-xs">
+<div class="flex justify-between"><span class="text-text-main">Strength:</span> <span class="text-primary">18</span></div>
+<div class="flex justify-between"><span class="text-text-main">Dexterity:</span> <span class="text-primary">12</span></div>
+<div class="flex justify-between"><span class="text-text-main">Intelligence:</span> <span class="text-primary">14</span></div>
+<div class="flex justify-between"><span class="text-text-main">Constitution:</span> <span class="text-primary">16</span></div>
+</div>
+</div>
+<div class="bg-panel-bg p-3 pixel-border">
+<h3 class="text-text-main text-sm text-shadow mb-2 border-b-2 border-panel-border pb-1">Quest Log</h3>
+<ul class="space-y-2 text-text-muted text-xs max-h-40 overflow-y-auto">
+<li class="text-yellow-400">[Active] The Sunstone</li>
+<li>- Find the lost relic.</li>
+<li class="line-through text-gray-600">[Done] A Rat Problem</li>
+<li class="line-through text-gray-600">- Clear the cellar.</li>
+</ul>
+</div>
+</div>
+<div class="col-span-2 space-y-4">
+<div class="w-full bg-center bg-no-repeat bg-cover flex flex-col justify-end overflow-hidden pixel-border min-h-80" data-alt="Pixel art scene of the Whispering Woods" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA79jlXkhUCe7t0NEfxlHf8SDUNS67SwuRQvQyGwiMxg__yDbYf7Z7bQmdsJ92UWFh-ATbG6mqqypYoGk9b2r2q5RQIPv6PNR8iqak3AulOlOwYfqK2Xq-wY0gmLKHeHn8HthrRxCW1zKgMLr19pkoqFpCFeaOP1Hlm_9eUzIAzsXkVlXp7UUUnZ3l3s3qB2mJj3wk5eZM-UZZn5Th6V-fWOGjIjmxlM1lKqweBIQ0w1ndr_bbJbuuHbG1Bo6xDmO-jmlKuzJwMjA"); image-rendering: pixelated;'></div>
+<div class="bg-panel-bg p-3 pixel-border h-48">
+<p class="text-text-main text-xs leading-relaxed">
+                                The wind howls through the ancient trees, carrying whispers of forgotten tales. You stand at the edge of the Whispering Woods, a place of legends and monsters. Your quest is clear: find the Sunstone, a relic of immense power hidden deep within. A gnarled path lies before you, disappearing into shadows. To your right, you hear rushing water.
+                            </p>
+</div>
+</div>
+<div class="col-span-1">
+<div class="bg-panel-bg p-3 pixel-border h-full">
+<h3 class="text-text-main text-sm text-shadow mb-3 border-b-2 border-panel-border pb-1">Inventory</h3>
+<div class="grid grid-cols-3 gap-2">
+<div class="group relative aspect-square bg-black/20 pixel-border-inset flex items-center justify-center hover:bg-black/40" data-alt="Health Potion icon" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBS9SH2VmxswE2nBXDTUlHqszPWoYHIVLc2v5lpo7TcWWr4VrIIdscUXJzQysBj4DeqV5eOHWuSiESKGEGmGYAmRTo01X3vPu5bNvFM4gOBSdjdU3C8WEP_Jm7XMX8BzHs7wuG_Hpq0rW33AighezWBhil7f8_R1WK14fUH8N-Oaj7NejhJrNf07q8ed5J2TsitD71z1Pdmq0O8hcaZD6wEKfSBdqi7pa0lNrcCOCZ776jMvGyVSa_tyT5HlcRTDT8KBeVfoJs-GA"); background-size: 60%; background-position: center; background-repeat: no-repeat; image-rendering: pixelated;'>
+<div class="absolute -bottom-7 left-1/2 -translate-x-1/2 w-max bg-background-dark text-text-main text-xs px-2 py-1 border-2 border-panel-border opacity-0 group-hover:opacity-100 transition-opacity">Health Potion</div>
+</div>
+<div class="group relative aspect-square bg-black/20 pixel-border-inset flex items-center justify-center hover:bg-black/40" data-alt="Mana Potion icon" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCQo0Yzhm_2PfJA-kfWoZwcIzvk5ObGhe8AdKRRf8O9mh43jWIJFFfPbCAJSOx5qNpV2EEloMo7HwD0E8VziHHT2WxswBwf4Hw21ewqIVP-rXTTGjnzf0ieq4UZyv-4-IK4WVqehp16NLfq7WuRE3EeONZ_5iBY95QBZroELxgbfqgEmjbMDyikgUP5441EnRISzMhuNSnJ_H_D112D5iCcvS_YtJHsJHHYItKo9O7Q08mJQ7tVbnWFkDXUbHfEkUjAxJ2QGoI_1g"); background-size: 60%; background-position: center; background-repeat: no-repeat; image-rendering: pixelated;'>
+<div class="absolute -bottom-7 left-1/2 -translate-x-1/2 w-max bg-background-dark text-text-main text-xs px-2 py-1 border-2 border-panel-border opacity-0 group-hover:opacity-100 transition-opacity">Mana Potion</div>
+</div>
+<div class="group relative aspect-square bg-black/20 pixel-border-inset flex items-center justify-center hover:bg-black/40" data-alt="Sword icon" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCFWUHERUVaPnsXX9el8dQa5-gm3F3kwtSkcEjnLlhVeiueTS4zdLeWEy2y5HTMmvlPJjrq0fEPkWB78SXUGTqIieZ69mYQKoCKEy54Zln97VGbAlX9DQq6Osr-9-nOtaJ17gX2Kkk_d_xw8mmm4Olz0h0SgJibgoXC4YNvnIQnSu8KJ8-Dev9rMDvGiSNgPzUmKFsj37mJxrS-MT2V88q8sxOXgDHrkkIOIJRUVa1UiYGUmhueAgVhjXXmHUqg7rWRXoarb0TTmg"); background-size: 60%; background-position: center; background-repeat: no-repeat; image-rendering: pixelated;'>
+<div class="absolute -bottom-7 left-1/2 -translate-x-1/2 w-max bg-background-dark text-text-main text-xs px-2 py-1 border-2 border-panel-border opacity-0 group-hover:opacity-100 transition-opacity">Iron Sword</div>
+</div>
+<div class="aspect-square bg-black/20 pixel-border-inset"></div>
+<div class="aspect-square bg-black/20 pixel-border-inset"></div>
+<div class="aspect-square bg-black/20 pixel-border-inset"></div>
+<div class="aspect-square bg-black/20 pixel-border-inset"></div>
+<div class="aspect-square bg-black/20 pixel-border-inset"></div>
+<div class="aspect-square bg-black/20 pixel-border-inset"></div>
+<div class="aspect-square bg-black/20 pixel-border-inset"></div>
+<div class="aspect-square bg-black/20 pixel-border-inset"></div>
+<div class="aspect-square bg-black/20 pixel-border-inset"></div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+<div class="fixed bottom-0 left-0 right-0 w-full">
+<div class="game-container-wrapper">
+<div class="px-4 pb-4">
+<div class="relative">
+<input class="command-input w-full bg-panel-bg text-text-main text-xs p-3 pl-4 pr-12 pixel-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-shadow placeholder-text-muted" placeholder="Enter command..." type="text"/>
+<button class="absolute inset-y-0 right-0 flex items-center px-4 text-text-muted hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">
+                        send
+                    </span>
+</button>
+</div>
+</div>
+<footer class="border-t-4 border-panel-border px-4 py-1 bg-panel-bg flex justify-between items-center text-xs text-text-muted">
+<p>v0.1.0</p>
+<div class="flex gap-3">
+<button class="hover:text-primary transition-colors">Save</button>
+<button class="hover:text-primary transition-colors">Load</button>
+<button class="hover:text-primary transition-colors">Options</button>
+</div>
+</footer>
+</div>
+</div>
+</div>
+</div>
+</body></html>

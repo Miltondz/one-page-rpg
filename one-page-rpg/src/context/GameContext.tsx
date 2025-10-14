@@ -2,12 +2,20 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { GameState, PlayerState, Scene, Decision } from '../types';
 import { NarrativeEngine } from '../engine/NarrativeEngine';
 import { useMultipleGameData } from '../hooks/useGameData';
+import { QuestManager } from '../systems/QuestManager';
+import { ProgressionSystem } from '../systems/ProgressionSystem';
+import { SeededRandom } from '../utils/SeededRandom';
+import { SaveSystem } from '../utils/SaveSystem';
+import type { Quest, QuestObjective } from '../systems/QuestSystem';
+import type { ConsequenceJSON } from '../systems/QuestLoader';
 
 interface GameContextType {
   gameState: GameState | null;
   playerState: PlayerState | null;
   currentScene: Scene | null;
   narrativeEngine: NarrativeEngine | null;
+  questManager: QuestManager | null;
+  progressionSystem: ProgressionSystem | null;
   loading: boolean;
   error: Error | null;
   
@@ -16,6 +24,26 @@ interface GameContextType {
   loadScene: (sceneId: string) => void;
   makeDecision: (decision: Decision) => Promise<void>;
   updatePlayerState: (updates: Partial<PlayerState>) => void;
+  
+  // Quest Actions
+  completeQuestObjective: (questId: string, objectiveId: string) => void;
+  progressQuestObjective: (questId: string, objectiveId: string, amount?: number) => void;
+  getActiveQuests: () => Quest[];
+  getQuestProgress: (questId: string) => number;
+  generateProceduralQuest: (playerLevel: number) => Quest;
+  activateQuest: (questId: string) => void;
+  abandonQuest: (questId: string) => void;
+  
+  // Progression Actions
+  gainExperience: (amount: number) => void;
+  applyAttributePoint: (attribute: 'FUE' | 'AGI' | 'SAB' | 'SUE') => void;
+  
+  // Save/Load Actions
+  saveGame: (slot?: string) => boolean;
+  loadGame: (slot: string) => boolean;
+  getSaveSlots: () => Array<{ slot: string; timestamp: number }>;
+  deleteSave: (slot: string) => boolean;
+  hasSavedGame: () => boolean;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -40,6 +68,9 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [playerState, setPlayerState] = useState<PlayerState | null>(null);
   const [currentScene, setCurrentScene] = useState<Scene | null>(null);
   const [narrativeEngine, setNarrativeEngine] = useState<NarrativeEngine | null>(null);
+  const [questManager, setQuestManager] = useState<QuestManager | null>(null);
+  const [progressionSystem, setProgressionSystem] = useState<ProgressionSystem | null>(null);
+  const [rng, setRng] = useState<SeededRandom | null>(null);
 
   // Inicializar engine cuando los datos estén cargados
   useEffect(() => {
@@ -73,10 +104,34 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const engine = new NarrativeEngine(allScenes, initialGameState);
         setNarrativeEngine(engine);
         
+        // Inicializar RNG
+        const seed = `game-seed-${Date.now()}`;
+        const gameRng = new SeededRandom(seed);
+        setRng(gameRng);
+        
+        // Inicializar Quest Manager
+        const qManager = new QuestManager(gameRng);
+        setQuestManager(qManager);
+        
+        // Inicializar Progression System
+        const progression = new ProgressionSystem();
+        setProgressionSystem(progression);
+        
         console.log('✅ Narrative Engine initialized');
         console.log(`📖 Loaded ${Object.keys(allScenes).length} scenes`);
+        console.log('✅ Quest Manager initialized');
+        console.log('✅ Progression System initialized');
+        
+        // Cargar quest del prólogo
+        qManager.loadCampaignQuest('/game_data/quests/prologue_quest.json')
+          .then(quest => {
+            if (quest) {
+              console.log(`📜 Loaded campaign quest: ${quest.title}`);
+            }
+          })
+          .catch(err => console.error('Error loading prologue quest:', err));
       } catch (err) {
-        console.error('Error initializing narrative engine:', err);
+        console.error('Error initializing game systems:', err);
       }
     }
   }, [data, loading]);
@@ -140,6 +195,21 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     setGameState(initialGameState);
+    
+    // Inicializar sistema de progresión con el jugador
+    if (progressionSystem) {
+      // No necesita inicialización especial, pero podemos verificar
+      console.log('📊 Progression system ready');
+    }
+    
+    // Activar quest del prólogo si está cargada
+    if (questManager) {
+      const prologueQuest = questManager.getQuest('prologo_deuda_ecos');
+      if (prologueQuest) {
+        questManager.activateQuest('prologo_deuda_ecos');
+        console.log('🎯 Prologue quest activated');
+      }
+    }
     
     // Cargar la primera escena
     loadScene('scene_01_intro');
@@ -235,17 +305,281 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     });
   };
 
+  // ==================== QUEST ACTIONS ====================
+
+  /**
+   * Completar un objetivo de quest
+   */
+  const completeQuestObjective = (questId: string, objectiveId: string) => {
+    if (!questManager || !playerState) return;
+
+    const result = questManager.completeObjective(questId, objectiveId);
+
+    if (result.success) {
+      console.log(`✅ Objective completed: ${result.objective?.description}`);
+      
+      // Aplicar recompensas
+      const { xp, gold, items } = result.rewards;
+      
+      if (xp > 0) {
+        gainExperience(xp);
+      }
+      
+      if (gold > 0) {
+        updatePlayerState({ gold: playerState.gold + gold });
+        console.log(`💰 +${gold} oro`);
+      }
+      
+      if (items && items.length > 0) {
+        updatePlayerState({ 
+          inventory: [...playerState.inventory, ...items] 
+        });
+        console.log(`🎁 Items recibidos: ${items.join(', ')}`);
+      }
+      
+      if (result.questCompleted) {
+        console.log('🎉 ¡Quest completada!');
+        
+        // Aplicar recompensas finales de la quest
+        const quest = questManager.getQuest(questId);
+        if (quest) {
+          if (quest.rewards.xp > 0) {
+            gainExperience(quest.rewards.xp);
+          }
+          if (quest.rewards.gold > 0) {
+            updatePlayerState({ gold: playerState.gold + quest.rewards.gold });
+            console.log(`💰 Recompensa final: +${quest.rewards.gold} oro`);
+          }
+        }
+      }
+    }
+  };
+
+  /**
+   * Progresar un objetivo con contador
+   */
+  const progressQuestObjective = (questId: string, objectiveId: string, amount: number = 1) => {
+    if (!questManager) return;
+
+    const result = questManager.progressObjective(questId, objectiveId, amount);
+
+    if (result.success) {
+      console.log(`📊 Progress: ${result.currentCount}`);
+      
+      if (result.completed) {
+        // Auto-completar cuando alcanza el objetivo
+        completeQuestObjective(questId, objectiveId);
+      }
+    }
+  };
+
+  /**
+   * Obtener quests activas
+   */
+  const getActiveQuests = (): Quest[] => {
+    if (!questManager) return [];
+    return questManager.getActiveQuests();
+  };
+
+  /**
+   * Obtener progreso de una quest
+   */
+  const getQuestProgress = (questId: string): number => {
+    if (!questManager) return 0;
+    return questManager.getQuestProgress(questId);
+  };
+
+  /**
+   * Generar quest procedural
+   */
+  const generateProceduralQuest = (playerLevel: number): Quest => {
+    if (!questManager) {
+      throw new Error('Quest Manager not initialized');
+    }
+    return questManager.generateProceduralQuest(playerLevel, 'side_quest');
+  };
+
+  /**
+   * Activar una quest
+   */
+  const activateQuest = (questId: string) => {
+    if (!questManager) return;
+    questManager.activateQuest(questId);
+    console.log(`🎯 Quest activated: ${questId}`);
+  };
+
+  /**
+   * Abandonar una quest
+   */
+  const abandonQuest = (questId: string) => {
+    if (!questManager) return;
+    const success = questManager.abandonQuest(questId);
+    if (success) {
+      console.log(`❌ Quest abandoned: ${questId}`);
+    }
+  };
+
+  // ==================== PROGRESSION ACTIONS ====================
+
+  /**
+   * Ganar experiencia y manejar subidas de nivel
+   */
+  const gainExperience = (amount: number) => {
+    if (!progressionSystem || !playerState) return;
+
+    console.log(`⭐ +${amount} XP`);
+    
+    const levelUpResult = progressionSystem.addExperience(playerState, amount);
+    
+    if (levelUpResult.leveledUp) {
+      console.log(`🎊 ¡LEVEL UP! Nivel ${levelUpResult.newLevel}`);
+      console.log(`📊 Recompensas:`);
+      console.log(`  • ${levelUpResult.rewards.attributePoints} puntos de atributo`);
+      console.log(`  • ${levelUpResult.rewards.healing} curación`);
+      console.log(`  • ${levelUpResult.rewards.inventorySlots} slots de inventario`);
+      console.log(`  • ${levelUpResult.rewards.gold} oro`);
+      
+      // Las recompensas ya se aplicaron en el playerState por referencia
+      // Solo necesitamos actualizar el estado
+      setPlayerState({ ...playerState });
+    } else {
+      // Actualizar solo XP
+      setPlayerState({ ...playerState });
+    }
+  };
+
+  /**
+   * Aplicar punto de atributo
+   */
+  const applyAttributePoint = (attribute: 'FUE' | 'AGI' | 'SAB' | 'SUE') => {
+    if (!progressionSystem || !playerState) return;
+
+    const success = progressionSystem.applyAttributePoint(playerState, attribute);
+    
+    if (success) {
+      console.log(`✨ +1 ${attribute}`);
+      setPlayerState({ ...playerState });
+    } else {
+      console.warn('No tienes puntos de atributo disponibles');
+    }
+  };
+
+  // ==================== SAVE/LOAD ACTIONS ====================
+
+  /**
+   * Guardar juego
+   */
+  const saveGame = (slot: string = 'autosave'): boolean => {
+    if (!gameState || !questManager || !rng) {
+      console.error('Game not fully initialized');
+      return false;
+    }
+
+    try {
+      // Preparar estado extendido con quests
+      const extendedState = {
+        ...gameState,
+        questData: questManager.serialize(),
+      };
+
+      // Guardar
+      const success = SaveSystem.saveToLocalStorage(extendedState as any, rng, slot);
+      
+      if (success) {
+        console.log(`💾 Game saved to slot: ${slot}`);
+      }
+      
+      return success;
+    } catch (error) {
+      console.error('Error saving game:', error);
+      return false;
+    }
+  };
+
+  /**
+   * Cargar juego
+   */
+  const loadGame = (slot: string): boolean => {
+    if (!questManager) {
+      console.error('Quest Manager not initialized');
+      return false;
+    }
+
+    try {
+      const result = SaveSystem.loadFromLocalStorage(slot);
+      
+      if (!result.success || !result.gameState) {
+        console.error('Failed to load game:', result.error);
+        return false;
+      }
+
+      // Restaurar estado base
+      setGameState(result.gameState);
+      setPlayerState(result.gameState.player as any);
+      
+      // Restaurar quests si existen
+      const extendedState = result.gameState as any;
+      if (extendedState.questData) {
+        questManager.deserialize(extendedState.questData);
+      }
+      
+      console.log(`📂 Game loaded from slot: ${slot}`);
+      return true;
+    } catch (error) {
+      console.error('Error loading game:', error);
+      return false;
+    }
+  };
+
+  /**
+   * Obtener slots de guardado disponibles
+   */
+  const getSaveSlots = () => {
+    return SaveSystem.listSaves();
+  };
+
+  /**
+   * Eliminar un guardado
+   */
+  const deleteSave = (slot: string): boolean => {
+    return SaveSystem.deleteSave(slot);
+  };
+
+  /**
+   * Verificar si hay guardados disponibles
+   */
+  const hasSavedGame = (): boolean => {
+    const saves = SaveSystem.listSaves();
+    return saves.length > 0;
+  };
+
   const value: GameContextType = {
     gameState,
     playerState,
     currentScene,
     narrativeEngine,
+    questManager,
+    progressionSystem,
     loading,
     error,
     initializeGame,
     loadScene,
     makeDecision,
     updatePlayerState,
+    completeQuestObjective,
+    progressQuestObjective,
+    getActiveQuests,
+    getQuestProgress,
+    generateProceduralQuest,
+    activateQuest,
+    abandonQuest,
+    gainExperience,
+    applyAttributePoint,
+    saveGame,
+    loadGame,
+    getSaveSlots,
+    deleteSave,
+    hasSavedGame,
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

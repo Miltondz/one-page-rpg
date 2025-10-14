@@ -247,16 +247,155 @@ import App from './AppNew.tsx'  // En lugar de './App.tsx'
 
 ---
 
+---
+
+### 6. **SaveGameManager** 💾
+
+Gestor completo de partidas guardadas.
+
+```tsx
+<SaveGameManager
+  currentGameState={gameState}
+  currentRng={rng}
+  onLoadSave={(loadedState, loadedRng) => {
+    console.log('Partida cargada');
+  }}
+  onClose={() => setShowSaves(false)}
+  mode="manage"
+  maxSlots={10}
+/>
+```
+
+**Props:**
+- `currentGameState?: GameState` - Estado actual para guardar
+- `currentRng?: SeededRandom` - RNG actual
+- `onLoadSave?: (state: GameState, rng: SeededRandom) => void` - Callback al cargar
+- `onClose?: () => void` - Callback para cerrar
+- `maxSlots?: number` - Número máximo de slots (default: 10)
+- `mode?: 'save' | 'load' | 'manage'` - Modo de operación (default: 'manage')
+
+**Características:**
+- 10 slots manuales + autosave
+- Vista previa de cada save (nombre, nivel, tiempo jugado)
+- Confirmación para acciones críticas
+- Integración con SaveSystem (localStorage)
+- Ordenado por fecha de guardado
+
+---
+
+### 7. **CombatView** ⚔️
+
+Sistema de combate por turnos completo.
+
+```tsx
+<CombatView
+  player={player}
+  enemies={enemies}
+  onCombatEnd={(result) => {
+    if (result.victory) {
+      console.log('Victoria:', result.rewards);
+    }
+  }}
+  onUseItem={(itemId) => console.log('Usar item:', itemId)}
+/>
+```
+
+**Props:**
+- `player: Player` - Datos del jugador
+- `enemies: Enemy[]` - Lista de enemigos
+- `onCombatEnd: (result) => void` - Callback al terminar combate
+- `onUseItem?: (itemId: string) => boolean` - Callback para usar items
+
+**Características:**
+- Sistema de turnos automático
+- 4 acciones: Atacar, Defender, Usar Item, Huir
+- Ataque con FUE o AGI
+- Log de combate en tiempo real
+- Animaciones de daño y críticos
+- Barras de HP animadas
+- Victoria/Derrota con recompensas
+
+---
+
+### 8. **InventoryView** 🎒
+
+Gestión completa de inventario y equipo.
+
+```tsx
+<InventoryView
+  player={player}
+  itemCatalog={itemDatabase}
+  onEquipItem={(itemId) => console.log('Equipar:', itemId)}
+  onUnequipItem={(itemId) => console.log('Desequipar:', itemId)}
+  onUseItem={(itemId) => console.log('Usar:', itemId)}
+  onDiscardItem={(itemId) => console.log('Descartar:', itemId)}
+  onClose={() => setShowInventory(false)}
+/>
+```
+
+**Props:**
+- `player: Player` - Jugador con inventario
+- `itemCatalog: Record<string, Item>` - Catálogo de items
+- `onEquipItem?: (itemId: string) => void` - Callback al equipar
+- `onUnequipItem?: (itemId: string) => void` - Callback al desequipar
+- `onUseItem?: (itemId: string) => void` - Callback al usar consumible
+- `onDiscardItem?: (itemId: string) => void` - Callback al descartar
+- `onClose?: () => void` - Callback para cerrar
+
+**Características:**
+- Filtros por tipo de item (Arma, Armadura, Consumible, etc.)
+- Visualización de stats con bonos de equipo
+- Vista detallada de item seleccionado
+- Colores por rareza (común, raro, legendario)
+- Slots de equipamiento (Arma, Armadura, Accesorio)
+- Confirmación antes de descartar
+- Protección de items de quest
+
+---
+
+### 9. **GameScreen** 🎮
+
+Pantalla principal del juego con navegación por tabs.
+
+```tsx
+<GameScreen
+  playerName={playerName}
+  playerAttributes={attributes}
+  onBack={() => setScreen('menu')}
+/>
+```
+
+**Props:**
+- `playerName: string` - Nombre del personaje
+- `playerAttributes: PlayerAttributes` - Atributos iniciales
+- `onBack: () => void` - Volver al menú principal
+
+**Tabs disponibles:**
+- 📜 **Misiones**: Sistema de quests con debug panel
+- 💾 **Guardar**: Gestor de partidas guardadas
+- 🎒 **Inventario**: Gestión de items y equipo
+- ⚔️ **Combate**: Sistema de combate por turnos
+
+**Características:**
+- Navegación fluida entre tabs
+- Integración con GameContext
+- Carga diferida de componentes
+- Estados de carga y error
+
+---
+
 ## 🎯 TODOs
 
-- [ ] Implementar sistema de guardado (localStorage)
+- [x] Implementar sistema de guardado (localStorage)
+- [x] Crear componente GameScreen (pantalla principal del juego)
+- [x] Crear componente CombatScreen
+- [x] Crear componente InventoryScreen
 - [ ] Añadir más animaciones de transición
-- [ ] Crear componente GameScreen (pantalla principal del juego)
-- [ ] Crear componente CombatScreen
-- [ ] Crear componente InventoryScreen
 - [ ] Añadir efectos de sonido
 - [ ] Implementar sistema de temas (claro/oscuro)
 - [ ] Añadir más variantes de modales
+- [ ] Implementar drag & drop para inventario
+- [ ] Añadir tooltips informativos
 
 ---
 
@@ -276,5 +415,5 @@ import App from './AppNew.tsx'  // En lugar de './App.tsx'
 
 ---
 
-**Última actualización**: 2025-01-14  
-**Versión**: 0.1.0
+**Última actualización**: 2025-01-14 (Implementación de SaveGameManager, CombatView, InventoryView)  
+**Versión**: 0.2.0

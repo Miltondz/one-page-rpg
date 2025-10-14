@@ -12,7 +12,7 @@ Un RPG narrativo de una sola página inspirado en el sistema 2d6, ambientado en 
 
 ## 📊 Estado del Proyecto
 
-### ✅ Completado (15%)
+### ✅ Completado (45%)
 
 - [x] **Sistema de Types TypeScript** (12 archivos)
   - Atributos, jugador, dados, mundo, escenas, NPCs, enemigos, items, quests, decisiones, estado del juego
@@ -27,16 +27,46 @@ Un RPG narrativo de una sola página inspirado en el sistema 2d6, ambientado en 
   - 13 escenas narrativas completas
   - Sistema de decisiones y consecuencias
   - Eventos aleatorios y encuentros
+- [x] **Sistema de Quest** (QuestSystem, QuestManager, QuestLoader)
+  - Generación procedural de quests
+  - Sistema de objetivos dinámicos
+  - Recompensas y consecuencias
+  - Panel de debug para desarrollo
+- [x] **Sistema de Guardado** (SaveSystem)
+  - Serialización de estado completo
+  - Soporte para múltiples slots
+  - Integración con localStorage
+  - UI completa de gestión (SaveGameManager)
+- [x] **Motor de Combate** (CombatEngine + CombatView)
+  - Sistema de turnos automático
+  - 4 acciones: Atacar (FUE/AGI), Defender, Item, Huir
+  - Log de combate en tiempo real
+  - Animaciones de daño y críticos
+  - Victoria/Derrota con recompensas
+- [x] **Sistema de Inventario** (InventoryView)
+  - Gestión completa de items
+  - Equipamiento y consumibles
+  - Filtros por tipo y rareza
+  - Stats con bonos de equipo
+- [x] **Motor Narrativo con LLM** (LLMService)
+  - Integración con SmolLM-360M-Instruct
+  - Generación dinámica de narrativa
+  - Fallback procedural automático
+  - Sistema de prompts contextual
 
-### ⏳ En Progreso (85%)
+### ⏳ En Progreso (55%)
 
-- [ ] Motor narrativo (scene engine)
-- [ ] Sistema de dados 2d6 con modificadores
-- [ ] Sistema de combate
-- [ ] Gestión de inventario
-- [ ] Persistencia (localStorage)
-- [ ] Componentes de UI del juego
-- [ ] Pantallas principales (creación, juego, combate)
+- [x] Motor narrativo (scene engine) - **Completado**
+- [x] Sistema de dados 2d6 con modificadores - **Completado**
+- [x] Sistema de combate - **Completado**
+- [x] Gestión de inventario - **Completado**
+- [x] Persistencia (localStorage) - **Completado**
+- [x] Componentes de UI del juego - **Completado (9 componentes)**
+- [x] Pantallas principales (creación, juego, combate) - **Completado**
+- [ ] Integración completa narrativa + quests
+- [ ] Sistema de comercio y tiendas
+- [ ] Efectos de sonido y música
+- [ ] Achievements y estadísticas
 
 ## 🎮 El Prólogo: "La Deuda del Ladrón de Ecos"
 
@@ -123,5 +153,5 @@ MIT License - Ver archivo LICENSE para más detalles.
 ---
 
 **Estado**: 🟢 En Desarrollo Activo  
-**Versión**: 0.1.0 (Prólogo en construcción)  
+**Versión**: 0.2.0 (Sistemas core completados - Combat, Inventory, Save)  
 **Última actualización**: Enero 2025

@@ -1,0 +1,58 @@
+ Hoja de Personaje Minimalista
+
+text
+
+NOMBRE: _________
+NIVEL: 1
+XP: 0/3
+
+ATRIBUTOS (Repartir 6 puntos):
+- FUERZA: ▢▢▢
+- AGILIDAD: ▢▢▢
+- SABIDURÍA: ▢▢▢
+- SUERTE: ▢▢▢
+
+EQUIPO (Elegir 2):
+[ ] Espada (+1 FUE en combate)
+[ ] Arco (+1 AGI a distancia)
+[ ] Grimorio (+1 SAB para magia)
+[ ] Amuleto (+1 SUERTE)
+[ ] Poción de Curación (cura 2 heridas)
+[ ] Llave maestra (abre cualquier cerradura)
+
+HERIDAS: □□□ (3 máximo)
+FATIGA: □□□ (3 máximo)
+BOTÍN: 0 monedas de oro
+
+### 2\. Sistema de Resolución 2d6
+
+text
+
+TIRO 2D6 + ATRIBUTO vs DIFICULTAD:
+
+6- : FALLO CRÍTICO - Sucede algo peor
+7-9: FALLO PARCIAL - Logras con consecuencias
+10+: ÉXITO - Logras lo intentado
+12+: ÉXITO CRÍTICO - Logras con beneficio extra
+
+DIFICULTADES BASE:
+- Fácil: 6+
+- Normal: 7+
+- Difícil: 9+
+- Épico: 11+
+
+### 3\. Mecánica de Avance
+
+text
+
+GANAR XP:
+- Superar un desafío: +1 XP
+- Derrotar un enemigo: +1 XP
+- Encontrar tesoro: +1 XP
+- Completar misión: +2 XP
+
+SUBIR NIVEL (cada 3 XP):
+- +1 punto de atributo
+- Curar todas las heridas
+- Elegir 1 nuevo equipo
+- Resetear fatiga

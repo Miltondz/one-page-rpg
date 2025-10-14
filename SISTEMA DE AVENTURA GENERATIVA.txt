@@ -1,0 +1,216 @@
+ SISTEMA DE AVENTURA GENERATIVA
+----------------------------------
+
+### 4\. Tabla de Inicio de Aventura
+
+text
+
+TIRAR 2D6 para situación inicial:
+
+2:  "Te despiertas en una mazmorra sin memoria"
+3:  "Un anciano te pide ayuda para encontrar un artefacto"
+4:  "Eres el único superviviente de una batalla"
+5:  "Una tormenta mágica te transporta a tierra desconocida"
+6:  "Encuentras un mapa del tesoro con marcas extrañas"
+7:  "Un mensajero te entrega una carta sellada"
+8:  "Ves una estrella fugaz caer en el bosque prohibido"
+9:  "Tu aldea es atacada por criaturas oscuras"
+10: "Encuentras un diario de un explorador desaparecido"
+11: "Un mercader te contrata para una misión peligrosa"
+12: "Sueños proféticos te guían hacia un destino"
+
+### 5\. Sistema de Escenas Procedural
+
+text
+
+CADA ESCENA TIENE:
+
+1. DESCRIPCIÓN AMBIENTAL (Tabla A)
+2. ENCUENTRO PRINCIPAL (Tabla B)
+3. DESAFÍO/OPORTUNIDAD (Tabla C)
+4. RESOLUCIÓN/CONSECUENCIA
+
+Tabla A - Ambiente (1d6):
+
+1.  Bosque oscuro y misterioso
+
+2.  Ruinas antiguas cubiertas de musgo
+
+3.  Cueva con cristales brillantes
+
+4.  Pueblo abandonado y silencioso
+
+5.  Camino sinuoso entre montañas
+
+6.  Río rápido con puente roto
+
+Tabla B - Encuentro (1d6):
+
+1.  Criatura (combate/resolución)
+
+2.  NPC (diálogo/negociación)
+
+3.  Obstáculo (superar con atributo)
+
+4.  Tesoro (recompensa/riesgo)
+
+5.  Misterio (investigar/resolver)
+
+6.  Evento (sorpresa/oportunidad)
+
+Tabla C - Desafío (1d6):
+
+1.  Fuerza: Forzar, combatir, levantar
+
+2.  Agilidad: Escalar, esquivar, moverse sigiloso
+
+3.  Sabiduría: Recordar, detectar, entender magia
+
+4.  Suerte: Encontrar, adivinar, oportunidad
+
+5.  Combinado: Dos atributos requeridos
+
+6.  Libre elección: Jugador elige el enfoque
+
+* * * * *
+
+⚔️ SISTEMA DE COMBATE SIMPLIFICADO
+----------------------------------
+
+### 6\. Resolución de Combate
+
+text
+
+INICIATIVA: Tirar 1d6 + AGI vs enemigo
+
+TURNO DEL JUGADOR:
+- ATAQUE: Tirar 2d6 + FUE vs DEFensa enemiga
+- DEFENSA: Tirar 2d6 + AGI vs ATAque enemigo
+- HUIDA: Tirar 2d6 + AGI vs 9+
+- ITEM: Usar objeto del equipo
+
+DAÑO:
+- Éxito normal: 1 herida al enemigo
+- Éxito crítico: 2 heridas al enemigo
+- Fallo: Recibes 1 herida
+- Fallo crítico: Recibes 2 heridas
+
+### 7\. Tabla de Enemigos
+
+text
+
+ENEMIGOS BÁSICOS (Nivel 1-2):
+
+GOBLIN:
+- FUE: 2, AGI: 3, DEF: 6
+- Heridas: 2
+- Botín: 1-2 monedas
+
+LOBO:
+- FUE: 3, AGI: 4, DEF: 5
+- Heridas: 2
+- Botín: Piel de lobo (vale 3 monedas)
+
+ESQUELETO:
+- FUE: 2, AGI: 2, DEF: 7
+- Heridas: 3
+- Botín: 2-3 monedas + amuleto antiguo
+
+ENEMIGOS MEDIOS (Nivel 3-4):
+
+ORCO:
+- FUE: 4, AGI: 2, DEF: 8
+- Heridas: 4
+- Botín: 4-6 monedas
+
+ARAÑA GIGANTE:
+- FUE: 3, AGI: 5, DEF: 6
+- Heridas: 3
+- Botín: Veneno (usa 1 vez en combate)
+
+JEFES (Nivel 5+):
+
+MAGO OSCURO:
+- FUE: 2, AGI: 3, DEF: 9
+- Heridas: 6
+- Botín: Grimorio mágico (+1 SAB permanente)
+
+* * * * *
+
+🏰 SISTEMA DE MISIONES Y OBJETIVOS
+----------------------------------
+
+### 8\. Generador de Misiones
+
+text
+
+TIRAR 2D6 para tipo de misión:
+
+2:  BUSCAR artefacto perdido en lugar peligroso
+3:  RESCATAR persona secuestrada por enemigos
+4:  DERROTAR jefe que amenaza la región
+5:  EXPLORAR lugar misterioso y reportar hallazgos
+6:  RECOLECTAR ingredientes raros para alquimia
+7:  PROTEGER lugar/persona de amenaza inminente
+8:  INVESTIGAR misterio sobrenatural
+9:  ENTREGAR objeto valioso a destino lejano
+10: NEGOCIAR acuerdo entre facciones enemigas
+11: DESCIFAR secreto antiguo en ruinas
+12: SUPERVIVIR evento catastrófico (tormenta, invasión)
+
+### 9\. Sistema de Recompensas
+
+text
+
+RECOMPENSAS POR MISIÓN:
+- XP: 2-3 puntos
+- Oro: 5-15 monedas
+- Equipo: 1 objeto nuevo
+- Mejora: +1 permanente a atributo
+- Aliado: NPC que ayuda en futuras misiones
+- Información: Pista para misión épica
+
+* * * * *
+
+🔮 SISTEMA ORÁCULO PARA NARRATIVA
+---------------------------------
+
+### 10\. Preguntas al Oráculo (2d6)
+
+text
+
+¿SUCEDE EVENTO INESPERADO?
+2: SÍ, y es extremadamente favorable
+3-5: SÍ, y es favorable
+6-8: SÍ, pero neutral
+9-10: SÍ, pero desfavorable
+11: SÍ, y es extremadamente desfavorable
+12: NO, pero algo importante se revela
+
+¿QUÉ ENCUENTRAS?
+2: Aliado inesperado que ofrece ayuda
+3-5: Recurso útil (comida, herramientas)
+6-8: Pista sobre tu misión principal
+9-10: Peligro inminente (trampa, enemigo)
+11: Tesoro escondido con buena recompensa
+12: Respuesta a un misterio importante
+
+¿CÓMO REACCIONA EL NPC?
+2: Extremadamente amigable y servicial
+3-5: Dispuesto a ayudar con condiciones
+6-8: Neutral, necesita persuasión
+9-10: Sospechoso o hostil
+11: Traicionero, con intenciones ocultas
+12: Tiene información crucial que comparte
+
+### 11\. Generador de NPCs
+
+text
+
+NOMBRE: Tabla de sílabas aleatorias
+OCUPACIÓN: Herrero, mercader, granjero, noble, etc.
+MOTIVACIÓN: Oro, poder, conocimiento, venganza, etc.
+SECRETO: Tiene información, es impostor, etc.
+ACTITUD: Amigable, neutral, hostil, temeroso, etc.
+
+* * * * *

@@ -6,6 +6,8 @@ import {
   CharacterCreation,
 } from './components';
 import { PlayerAttributes } from './types';
+import { GameProvider } from './context/GameContext';
+import GameScreen from './components/GameScreen';
 
 type GameScreen = 'splash' | 'menu' | 'character-creation' | 'game' | 'options';
 
@@ -73,50 +75,28 @@ function App() {
         );
 
       case 'game':
-        return (
-          <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black p-8 flex items-center justify-center">
-            <div className="text-center space-y-6">
-              <div className="text-8xl mb-4">🎮</div>
-              <h1 className="text-purple-400 text-4xl font-bold">
-                Juego en Desarrollo
-              </h1>
-              <div className="bg-black/40 p-6 border-2 border-gray-700 max-w-md mx-auto">
-                <p className="text-gray-300 mb-4">
-                  Personaje: <span className="text-yellow-400 font-bold">{playerName}</span>
-                </p>
-                <div className="grid grid-cols-2 gap-4 text-gray-400 text-sm">
-                  <div className="bg-gray-800/50 p-3 border border-gray-600">
-                    <p className="text-purple-400 font-bold">💪 FUE</p>
-                    <p className="text-2xl">{playerAttributes?.FUE}</p>
-                  </div>
-                  <div className="bg-gray-800/50 p-3 border border-gray-600">
-                    <p className="text-purple-400 font-bold">🏃 AGI</p>
-                    <p className="text-2xl">{playerAttributes?.AGI}</p>
-                  </div>
-                  <div className="bg-gray-800/50 p-3 border border-gray-600">
-                    <p className="text-purple-400 font-bold">📚 SAB</p>
-                    <p className="text-2xl">{playerAttributes?.SAB}</p>
-                  </div>
-                  <div className="bg-gray-800/50 p-3 border border-gray-600">
-                    <p className="text-purple-400 font-bold">🍀 SUE</p>
-                    <p className="text-2xl">{playerAttributes?.SUE}</p>
-                  </div>
-                </div>
+        if (!playerName || !playerAttributes) {
+          return (
+            <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black p-8 flex items-center justify-center">
+              <div className="text-center">
+                <p className="text-red-400 text-xl mb-4">⚠️ Error: No hay datos del personaje</p>
+                <button
+                  onClick={() => setCurrentScreen('menu')}
+                  className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white"
+                >
+                  Volver al Menú
+                </button>
               </div>
-              <div className="space-y-4 text-gray-500 text-sm">
-                <p>Próximamente: Motor narrativo, sistema de combate, gestión de inventario</p>
-                <p className="text-xs text-gray-600">
-                  Ver <code className="bg-gray-800 px-2 py-1">/public/preview.html</code> para una vista previa estática
-                </p>
-              </div>
-              <button
-                onClick={() => setCurrentScreen('menu')}
-                className="mt-8 px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-none border-4 border-purple-800 shadow-lg transition-all hover:scale-105"
-              >
-                ← Volver al Menú
-              </button>
             </div>
-          </div>
+          );
+        }
+        
+        return (
+          <GameScreen
+            playerName={playerName}
+            playerAttributes={playerAttributes}
+            onBack={() => setCurrentScreen('menu')}
+          />
         );
 
       case 'options':
@@ -166,9 +146,11 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-black">
-      {renderScreen()}
-    </div>
+    <GameProvider>
+      <div className="min-h-screen bg-black">
+        {renderScreen()}
+      </div>
+    </GameProvider>
   );
 }
 

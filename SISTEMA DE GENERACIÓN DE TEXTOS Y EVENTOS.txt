@@ -1,0 +1,723 @@
+SISTEMA DE GENERACIÓN DE TEXTOS Y EVENTOS - ONE PAGE RPG
+===========================================================
+
+🏗️ ARQUITECTURA DEL SISTEMA GENERATIVO
+---------------------------------------
+
+### 1\. Sistema de Plantillas con Tokens
+
+text
+
+PLANTILLA BASE: [ADJETIVO] [SUSTANTIVO] [VERBO] [OBJETO] [CONTEXTO]
+
+TOKENS DISPONIBLES:
+- ADJETIVO: ["oscuro", "antiguo", "misterioso", "brillante", "maldito"]
+- SUSTANTIVO: ["bosque", "ruinas", "cueva", "templo", "cripta"]
+- VERBO: ["guarda", "esconde", "protege", "revela", "conduce a"]
+- OBJETO: ["tesoro", "secreto", "poder", "verdad", "destino"]
+- CONTEXTO: ["desde tiempos inmemoriales", "bajo la luna llena", "según la leyenda"]
+
+### 2\. Motor de Generación por Capas
+
+text
+
+CAPA 1: ESTRUCTURA (Tablas base)
+CAPA 2: DETALLES (Adjetivos, modificadores)
+CAPA 3: CONEXIONES (Eventos relacionados)
+CAPA 4: CONSECUENCIAS (Basado en acciones previas)
+
+* * * * *
+
+📖 GENERACIÓN DE NARRATIVA PRINCIPAL
+------------------------------------
+
+### 3\. Tablas de Generación de Escenarios
+
+javascript
+
+// TABLA DE LOCACIONES PRINCIPALES
+const locations = {
+  primary: [
+    "Bosque {adj} donde los {creature} {activity}",
+    "Ruinas {adj} de una civilización {lost}",
+    "Montañas {adj} que esconden {secret}",
+    "Ciudad {adj} gobernada por {faction}",
+    "Mazmorra {adj} construida por {builder}"
+  ],
+
+  adjectives: ["Olvidado", "Maldito", "Antiguo", "Prohibido", "Encantado"],
+  creatures: ["lobos", "espíritus", "goblins", "dragones", "fantasmas"],
+  activities: ["aullan", "merodean", "guardian", "acechan", "protegen"],
+  lost: ["perdida", "extinta", "mítica", "ancestral", "olvidada"],
+  secrets: ["secretos oscuros", "tesoros perdidos", "poderes antiguos"],
+  factions: ["un tirano cruel", "un consejo sabio", "una secta misteriosa"],
+  builders: ["un mago loco", "un dios olvidado", "una reina antigua"]
+};
+
+### 4\. Generador de Situaciones Iniciales
+
+javascript
+
+function generateInitialSituation() {
+  const templates = [
+    "Te despiertas en {location} con {item} y {memory}",
+    "{NPC} te entrega {questItem} y te pide {mission}",
+    "Encuentras {document} que habla de {legend} en {targetLocation}",
+    "Una {event} te lleva a {location} donde descubres {clue}"
+  ];
+
+  const location = generateLocation();
+  const memory = generateMemory();
+  const mission = generateMission();
+
+  return templates[random(templates.length)]
+    .replace("{location}", location)
+    .replace("{memory}", memory)
+    .replace("{mission}", mission);
+}
+
+### 5\. Sistema de Memoria y Trasfondo
+
+javascript
+
+const memoryGenerator = {
+  personal: [
+    "sin recordar cómo llegaste allí",
+    "con solo fragmentos de tu pasado",
+    "con una cicatriz que no recuerdas recibir",
+    "con un nombre que susurran los vientos"
+  ],
+
+  items: [
+    "una espada oxidada",
+    "un mapa incompleto",
+    "una carta sellada",
+    "un diario manchado de sangre",
+    "un amuleto brillante"
+  ],
+
+  documents: [
+    "un pergamino antiguo",
+    "un libro prohibido",
+    "una tablilla rota",
+    "una carta amorosa"
+  ]
+};
+
+* * * * *
+
+🎭 GENERACIÓN DE EVENTOS Y ENCUENTROS
+-------------------------------------
+
+### 6\. Motor de Eventos Dinámicos
+
+javascript
+
+class EventGenerator {
+  constructor() {
+    this.previousEvents = [];
+    this.playerStats = {};
+  }
+
+  generateEvent(eventType, difficulty) {
+    const baseEvent = this.getBaseEvent(eventType);
+    const modifiedEvent = this.applyContext(baseEvent);
+    const connectedEvent = this.addConnections(modifiedEvent);
+
+    return this.finalizeText(connectedEvent);
+  }
+
+  getBaseEvent(type) {
+    const events = {
+      combat: [
+        "Un {enemy} {behavior} desde {direction}",
+        "{number} {enemy} te {action} en {location}",
+        "El {boss} {bossAction} mientras {minions} {minionAction}"
+      ],
+
+      exploration: [
+        "Encuentras {discovery} que {reveals}",
+        "Una {path} conduce a {place} donde {event}",
+        "Las {clues} te llevan a {location} con {surprise}"
+      ],
+
+      social: [
+        "{NPC} te {approach} con {offer}",
+        "El {faction} {factionAction} porque {reason}",
+        "Una {npcType} {emotion} te {request} para {task}"
+      ]
+    };
+
+    return events[type][random(events[type].length)];
+  }
+}
+
+### 7\. Tablas de Detalles Específicos
+
+javascript
+
+const detailTables = {
+  enemies: {
+    basic: ["goblin", "lobo", "esqueleto", "araña", "bandido"],
+    advanced: ["troll", "ogro", "magoscuro", "caballerono-muerto"],
+    bosses: ["dragón", "lich", "demonio", "gigante"]
+  },
+
+  behaviors: [
+    "ataca ferozmente", "acecha silenciosamente", "embosca desde",
+    "carga hacia ti", "lanza hechizos desde"
+  ],
+
+  directions: [
+    "las sombras", "lo alto", "el abismo", "las ruinas", "el bosque"
+  ],
+
+  discoveries: [
+    "un símbolo antiguo", "una inscripción oculta", "un mecanismo secreto",
+    "un pasaje escondido", "un artefacto brillante"
+  ],
+
+  revelations: [
+    "revela una verdad oculta", "conduce a un lugar prohibido",
+    "activa un poder ancestral", "libera una entidad dormida"
+  ]
+};
+
+* * * * *
+
+🗣️ GENERACIÓN DE DIÁLOGOS Y NPCs
+---------------------------------
+
+### 8\. Sistema de Personalidad para NPCs
+
+javascript
+
+class NPCGenerator {
+  generateNPC(importance) {
+    return {
+      name: this.generateName(),
+      occupation: this.generateOccupation(),
+      personality: this.generatePersonality(),
+      goal: this.generateGoal(),
+      secret: this.generateSecret(),
+      dialogue: this.generateDialoguePattern()
+    };
+  }
+
+  generateDialoguePattern() {
+    const patterns = {
+      friendly: [
+        "Te ayudo con {playerGoal}. A cambio, {request}",
+        "He oído hablar de {clue}. Podría decirte más si {condition}",
+        "Bienvenido, {playerClass}. {offer} si estás interesado"
+      ],
+
+      hostile: [
+        "¡{threat}! A menos que {demand}, {consequence}",
+        "No perteneces aquí, {playerClass}. {warning}",
+        "Mi {faction} no tolera {playerAction}. Prepárate para {punishment}"
+      ],
+
+      mysterious: [
+        "El {prophecy} se acerca. {hint} sobre {importantLocation}",
+        "Busca el {artifact} en {dangerousPlace}. Allí encontrarás {reward}",
+        "{warning} sobre {threat}. Solo {solution} puede salvarnos"
+      ]
+    };
+
+    return patterns;
+  }
+}
+
+### 9\. Generador de Nombres y Títulos
+
+javascript
+
+const nameGenerator = {
+  syllables: {
+    start: ["Al", "Be", "Ce", "De", "El", "Fo", "Ga", "He", "Il", "Jo"],
+    middle: ["ri", "ma", "nor", "tha", "bel", "cor", "dan", "el", "fin", "gor"],
+    end: ["an", "eth", "ion", "us", "ar", "en", "or", "ax", "il", "ur"]
+  },
+
+  titles: {
+    noble: ["Conde", "Duque", "Barón", "Señor", "Dama", "Príncipe"],
+    military: ["Capitán", "General", "Comandante", "Sargento", "Guardia"],
+    mystical: ["Archimago", "Oráculo", "Profeta", "Sabio", "Vidente"]
+  },
+
+  generateName() {
+    const start = this.syllables.start[random(this.syllables.start.length)];
+    const middle = this.syllables.middle[random(this.syllables.middle.length)];
+    const end = this.syllables.end[random(this.syllables.end.length)];
+    return start + middle + end;
+  }
+};
+
+* * * * *
+
+🏰 GENERACIÓN DE MISIONES Y OBJETIVOS
+-------------------------------------
+
+### 10\. Sistema de Misiones Procedurales
+
+javascript
+
+class QuestGenerator {
+  generateQuest(questLevel, playerLevel) {
+    const template = this.selectTemplate(questLevel);
+    const details = this.generateQuestDetails(template);
+    const objectives = this.generateObjectives(details);
+    const rewards = this.generateRewards(questLevel, playerLevel);
+
+    return {
+      description: this.buildQuestDescription(template, details),
+      objectives: objectives,
+      rewards: rewards,
+      difficulty: questLevel
+    };
+  }
+
+  selectTemplate(level) {
+    const templates = {
+      1: ["Recupera {item} de {location}", "Derrota a {enemy} en {area}"],
+      2: ["Investiga {mystery} en {place}", "Protege {npc} de {threat}"],
+      3: ["Destruye {artifact} en {dangerousPlace}", "Derrota a {boss} y su {faction}"]
+    };
+
+    return templates[level][random(templates[level].length)];
+  }
+
+  generateObjectives(details) {
+    return [
+      `Viaja a ${details.location}`,
+      `Encuentra ${details.target}`,
+      `Supera ${details.obstacle}`,
+      `Completa ${details.finalChallenge}`
+    ];
+  }
+}
+
+### 11\. Generador de Recompensas Contextuales
+
+javascript
+
+const rewardGenerator = {
+  generateReward(questDifficulty, questType, playerNeeds) {
+    const baseRewards = {
+      gold: this.calculateGold(questDifficulty),
+      exp: questDifficulty * 25,
+      items: this.selectItems(questType, questDifficulty),
+      reputation: this.calculateReputation(questType)
+    };
+
+    // Ajustar recompensas basado en lo que el jugador necesita
+    if (playerNeeds.healthLow) baseRewards.items.push("Poción de Vida Superior");
+    if (playerNeeds.weakEquipment) baseRewards.items.push("Mejora de Equipo");
+
+    return baseRewards;
+  },
+
+  calculateGold(difficulty) {
+    const base = 10;
+    const multiplier = difficulty * 5;
+    return base + (random(multiplier) + multiplier);
+  },
+
+  selectItems(questType, difficulty) {
+    const itemsByType = {
+      combat: ["Espada Mejorada", "Armadura Reforzada", "Poción de Fuerza"],
+      exploration: ["Mapa Detallado", "Brújula Mágica", "Botas del Viajero"],
+      mystery: ["Amuleto de la Verdad", "Lente de Aumento", "Pergamino de Detección"]
+    };
+
+    return itemsByType[questType].slice(0, difficulty);
+  }
+};
+
+* * * * *
+
+🔮 SISTEMA ORÁCULO AVANZADO
+---------------------------
+
+### 12\. Motor de Decisiones Contextuales
+
+javascript
+
+class OracleEngine {
+  constructor(worldState) {
+    this.worldState = worldState;
+    this.eventHistory = [];
+  }
+
+  askOracle(question, context) {
+    const baseProbability = this.calculateProbability(question, context);
+    const modifiedProbability = this.modifyProbability(baseProbability, context);
+    const roll = random(12) + 1; // 2d6 simulation
+
+    return {
+      result: this.interpretRoll(roll, modifiedProbability),
+      certainty: this.calculateCertainty(context),
+      additionalInfo: this.generateAdditionalInfo(question, roll)
+    };
+  }
+
+  calculateProbability(question, context) {
+    let probability = 0.5; // Base 50%
+
+    // Modificar basado en contexto mundial
+    if (context.location === "Bosque Oscuro") probability -= 0.2;
+    if (this.worldState.playerReputation > 50) probability += 0.1;
+    if (this.eventHistory.includes("stormComing")) probability += 0.3;
+
+    return Math.max(0.1, Math.min(0.9, probability));
+  }
+
+  interpretRoll(roll, probability) {
+    const threshold = Math.floor(12 * probability);
+
+    if (roll <= 2) return "No, y empeora";
+    if (roll <= 4) return "No";
+    if (roll <= 6) return "No, pero";
+    if (roll <= 8) return "Sí, pero";
+    if (roll <= 10) return "Sí";
+    if (roll <= 12) return "Sí, y mejora";
+  }
+
+  generateAdditionalInfo(question, roll) {
+    const infoTables = {
+      location: ["Hay señales de lucha reciente", "El aire huele a magia", "Silencio inquietante"],
+      npc: ["Parece nervioso", "Esconde algo", "Tiene marcas de batalla"],
+      event: ["El clima está cambiando", "Animales actuando extraño", "Sueños premonitorios"]
+    };
+
+    return infoTables[question.type][random(infoTables[question.type].length)];
+  }
+}
+
+* * * * *
+
+🎨 GENERACIÓN DE DESCRIPCIONES ATMOSFÉRICAS
+-------------------------------------------
+
+### 13\. Sistema de Ambiente y Atmósfera
+
+javascript
+
+const atmosphereGenerator = {
+  moods: ["misterioso", "peligroso", "tranquilo", "sagrado", "corrupto", "esperanzador"],
+
+  generateSceneDescription(location, mood, timeOfDay) {
+    const descriptors = {
+      mysterious: [
+        `La ${timeOfDay} proyecta sombras ${this.getShadowType()} en ${location}`,
+        `Un ${this.getMysteriousElement()} parece observar desde ${this.getHidingSpot()}`,
+        `El aire en ${location} carga con ${this.getMysteriousFeeling()}`
+      ],
+
+      dangerous: [
+        `${location} muestra ${this.getDangerSigns()} por todas partes`,
+        `El ${this.getThreatSource()} en ${location} te pone en alerta máxima`,
+        `${this.getWarningSigns()} advierten del peligro en ${location}`
+      ]
+    };
+
+    return descriptors[mood][random(descriptors[mood].length)];
+  },
+
+  getShadowType() {
+    return ["alargadas y retorcidas", "que se mueven solas", "que susurran secretos"][random(3)];
+  },
+
+  getDangerSigns() {
+    return ["marcas de garras", "huesos esparcidos", "armas rotas"][random(3)];
+  }
+};
+
+### 14\. Generador de Sensaciones y Emociones
+
+javascript
+
+const sensoryGenerator = {
+  senses: {
+    sight: ["brillo tenue", "movimiento fugaz", "sombras danzantes", "destellos repentinos"],
+    sound: ["susurros lejanos", "crujidos siniestros", "ecos de pasos", "canciones olvidadas"],
+    smell: ["olor a ozono", "perfume ancestral", "putrefacción dulce", "incienso místico"],
+    feeling: ["escalofríos repentinos", "calor inexplicable", "presencia observadora", "energía estática"]
+  },
+
+  generateSensoryDescription(location) {
+    const sense = this.selectRandomSense();
+    const sensation = this.senses[sense][random(this.senses[sense].length)];
+
+    return `En ${location}, ${this.getSenseVerb(sense)}  ${sensation}.`;
+  },
+
+  getSenseVerb(sense) {
+    const verbs = {
+      sight: "ves",
+      sound: "oyes",
+      smell: "hueles",
+      feeling: "sientes"
+    };
+    return verbs[sense];
+  }
+};
+
+* * * * *
+
+🔄 SISTEMA DE COHERENCIA Y MEMORIA
+----------------------------------
+
+### 15\. Motor de Consistencia Narrativa
+
+javascript
+
+class NarrativeConsistency {
+  constructor() {
+    this.establishedFacts = new Set();
+    this.characterRelationships = new Map();
+    this.locationHistory = new Map();
+  }
+
+  establishFact(fact) {
+    this.establishedFacts.add(fact);
+  }
+
+  checkConsistency(newEvent) {
+    const conflicts = [];
+
+    for (let fact of this.establishedFacts) {
+      if (this.contradicts(fact, newEvent)) {
+        conflicts.push(`Conflict with: ${fact}`);
+      }
+    }
+
+    return conflicts;
+  }
+
+  contradicts(existingFact, newEvent) {
+    // Lógica simple de detección de contradicciones
+    const contradictions = {
+      "NPC X está muerto": ["NPC X aparece vivo"],
+      "Lugar Y destruido": ["Lugar Y está intacto"],
+      "Objeto Z perdido": ["Objeto Z está aquí"]
+    };
+
+    return contradictions[existingFact]?.includes(newEvent);
+  }
+
+  generateConnectingElement() {
+    const connections = [
+      "Esto te recuerda a un evento similar que viviste antes",
+      "Ves un símbolo que reconoces de tu pasado",
+      "El nombre te resulta familiar por una historia que oíste",
+      "Esto conecta con la misión que te encomendaron"
+    ];
+
+    return connections[random(connections.length)];
+  }
+}
+
+* * * * *
+
+🎯 IMPLEMENTACIÓN PRÁCTICA
+--------------------------
+
+### 16\. Flujo de Generación Completo
+
+javascript
+
+function generateCompleteScene(playerState, worldState) {
+  // 1. Determinar tipo de escena
+  const sceneType = determineSceneType(playerState);
+
+  // 2. Generar descripción base
+  const baseDescription = generateBaseDescription(sceneType);
+
+  // 3. Añadir detalles sensoriales
+  const sensoryDetails = generateSensoryDetails(sceneType);
+
+  // 4. Generar encuentro principal
+  const mainEncounter = generateEncounter(sceneType, playerState);
+
+  // 5. Añadir elementos conectores
+  const connectors = generateConnectors(worldState);
+
+  // 6. Verificar consistencia
+  const consistencyCheck = checkConsistency(baseDescription + mainEncounter);
+
+  // 7. Combinar todo
+  return `  ${baseDescription}  ${sensoryDetails}  ${mainEncounter}  ${connectors}  `;
+}
+
+Este sistema genera textos y eventos coherentes, contextuales y únicos para cada partida, manteniendo la consistencia narrativa mientras ofrece variedad infinita a través de la combinación procedural de elementos.
+
+MEJORAS AVANZADAS PARA ONE PAGE RPG
+====================================
+
+🧠 SISTEMA DE IA ADAPTATIVA
+---------------------------
+
+### 1\. Personalidad Dinámica del Mundo
+
+javascript
+
+class WorldPersonality {
+  constructor() {
+    this.mood = 'neutral'; // neutral, dark, heroic, mysterious, whimsical
+    this.themes = new Set(['fantasy', 'adventure']);
+    this.narrativeStyle = 'descriptive'; // descriptive, concise, poetic, gritty
+  }
+
+  adaptToPlayerActions(playerChoices) {
+    // Analizar patrones de decisiones del jugador
+    const mercyRatio = playerChoices.merciful / playerChoices.total;
+    const violentRatio = playerChoices.violent / playerChoices.total;
+    const cleverRatio = playerChoices.clever / playerChoices.total;
+
+    if (mercyRatio > 0.7) this.mood = 'hopeful';
+    if (violentRatio > 0.6) this.mood = 'dark';
+    if (cleverRatio > 0.5) this.mood = 'mysterious';
+
+    this.applyMoodToGeneration();
+  }
+
+  applyMoodToGeneration() {
+    const moodModifiers = {
+      dark: {
+        adjectives: ['siniestro', 'sombrio', 'desolado', 'corrupto'],
+        events: ['presencia maligna', 'traición', 'pérdida'],
+        consequences: ['consecuencias severas', 'sacrificios necesarios']
+      },
+      heroic: {
+        adjectives: ['glorioso', 'valiente', 'noble', 'inspirador'],
+        events: ['llamado al deber', 'alianzas fortuitas', 'redenciones'],
+        consequences: ['recompensas merecidas', 'reconocimiento']
+      },
+      mysterious: {
+        adjectives: ['enigmatico', 'arcano', 'oculto', 'cifrado'],
+        events: ['visiones', 'profecías', 'secretos ancestrales'],
+        consequences: ['verdades reveladas', 'poderes despertados']
+      }
+    };
+
+    return moodModifiers[this.mood] || moodModifiers.neutral;
+  }
+}
+
+### 2\. NPCs con Memoria y Evolución
+
+javascript
+
+class DynamicNPC {
+  constructor(baseData) {
+    this.id = baseData.id;
+    this.name = baseData.name;
+    this.relationship = 0; // -100 to 100
+    this.memory = new Map(); // player interactions
+    this.goals = baseData.goals;
+    this.secrets = baseData.secrets;
+  }
+
+  rememberInteraction(playerAction, outcome) {
+    this.memory.set(Date.now(), { action: playerAction, outcome });
+
+    // Ajustar relación basado en la acción
+    const relationshipChange = this.calculateRelationshipChange(playerAction, outcome);
+    this.relationship = Math.max(-100, Math.min(100, this.relationship + relationshipChange));
+  }
+
+  generateDialogue(context) {
+    const baseDialogue = this.getBaseDialogue(context);
+    const modifiedDialogue = this.applyRelationshipModifiers(baseDialogue);
+    return this.addMemoryReferences(modifiedDialogue);
+  }
+
+  addMemoryReferences(dialogue) {
+    if (this.memory.size === 0) return dialogue;
+
+    const recentMemory = Array.from(this.memory.values()).slice(-3);
+    const memoryReference = this.selectRelevantMemory(recentMemory);
+
+    if (memoryReference && Math.random() > 0.7) {
+      return `${dialogue}  ${this.createMemoryPhrase(memoryReference)}`;
+    }
+
+    return dialogue;
+  }
+}
+
+
+ISTEMA DE LOGROS Y METAS
+6. Logros Dinámicos y Secretos
+javascript
+class AchievementSystem {
+  constructor() {
+    this.achievements = new Map();
+    this.hiddenAchievements = new Set();
+    this.achievementProgress = new Map();
+    this.initAchievements();
+  }
+
+  initAchievements() {
+    // Logros basados en estadísticas
+    this.addAchievement('first_blood', 'Primera Sangre', 'Derrotar tu primer enemigo');
+    this.addAchievement('hoarder', 'Acaparador', 'Acumular 1000 monedas de oro');
+    this.addAchievement('explorer', 'Explorador', 'Visitar 10 locaciones únicas');
+    
+    // Logros secretos
+    this.addHiddenAchievement('prophecy_fulfilled', 'Destino Cumplido', 'Cumplir una profecía ancestral');
+    this.addHiddenAchievement('peacemaker', 'Pacificador', 'Completar 5 encuentros sin violencia');
+  }
+
+  checkProgress(playerState, action, outcome) {
+    this.achievements.forEach((achievement, id) => {
+      if (!achievement.earned && this.evaluateAchievement(id, playerState, action, outcome)) {
+        this.unlockAchievement(id);
+      }
+    });
+  }
+
+  evaluateAchievement(achievementId, playerState, action, outcome) {
+    const conditions = {
+      'first_blood': () => outcome.enemyDefeated && playerState.stats.enemiesDefeated === 1,
+      'hoarder': () => playerState.inventory.gold >= 1000,
+      'explorer': () => playerState.locationsVisited.size >= 10,
+      'peacemaker': () => playerState.pacifistEncounters >= 5,
+      'prophecy_fulfilled': () => outcome.prophecyFulfilled
+    };
+
+    return conditions[achievementId] ? conditions[achievementId]() : false;
+  }
+
+  unlockAchievement(achievementId) {
+    const achievement = this.achievements.get(achievementId);
+    achievement.earned = true;
+    achievement.earnedDate = new Date();
+    
+    // Recompensa por logro
+    this.grantAchievementReward(achievementId);
+    
+    // Mostrar notificación
+    this.showAchievementNotification(achievement);
+  }
+
+  showAchievementNotification(achievement) {
+    // Animación retro de logro desbloqueado
+    const notification = document.createElement('div');
+    notification.className = 'retro-achievement-notification';
+    notification.innerHTML = `
+      <div class="achievement-icon">🏆</div>
+      <div class="achievement-text">
+        <div class="achievement-title">${achievement.name}</div>
+        <div class="achievement-desc">${achievement.description}</div>
+      </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animación de entrada y salida
+    setTimeout(() => notification.remove(), 5000);
+  }
+}
