@@ -48,11 +48,21 @@ Un RPG narrativo de una sola página inspirado en el sistema 2d6, ambientado en 
   - Equipamiento y consumibles
   - Filtros por tipo y rareza
   - Stats con bonos de equipo
-- [x] **Motor Narrativo con LLM** (LLMService)
-  - Integración con SmolLM-360M-Instruct
+- [x] **Motor Narrativo con LLM** (LLMService + PromptConfigService)
+  - Integración con SmolLM-360M-Instruct local
   - Generación dinámica de narrativa
   - Fallback procedural automático
-  - Sistema de prompts contextual
+  - **Sistema de prompts centralizado desde JSON**
+    - Configuración única en `public/config/llm-prompts.json`
+    - Templates parametrizados con variables y secciones condicionales
+    - Métodos especializados: diálogos, oráculo, diario, logros, narrativa
+    - Método `buildDynamicPrompt()` para generación ad-hoc
+    - Todos los sistemas (NPCDialogue, Oracle, Journal, Narrative) usan el servicio
+  - Sistemas integrados con prompts centralizados:
+    - NPCDialogueGenerator (diálogos contextuales con memoria)
+    - OracleSystem (interpretaciones místicas 2d6)
+    - NarrativeJournal (entradas de diario evocativas)
+    - LLMNarrativeEngine (descripciones, combate, descubrimientos)
 - [x] **Sistema de Catálogos** (useGameCatalog)
   - Carga dinámica de items, enemigos, NPCs y locaciones
   - Cache de datos JSON
@@ -169,6 +179,39 @@ MIT License - Ver archivo LICENSE para más detalles.
 
 ---
 
-**Estado**: 🟢 En Desarrollo Activo  
-**Versión**: 0.3.0 (Integración narrativa + Audio contextual + Comercio)  
+**Estado**: 🜢 En Desarrollo Activo  
+**Versión**: 0.4.0 (Sistema de prompts LLM centralizado)  
 **Última actualización**: Enero 2025 (14)
+
+## 🧠 Arquitectura del Sistema de Prompts LLM
+
+### Principios de Diseño
+
+1. **Centralización Total**: Toda la lógica de construcción de prompts reside en `PromptConfigService`
+2. **Configuración desde JSON**: Las piezas mínimas (templates, variables, constraints) están en `public/config/llm-prompts.json`
+3. **Sin Lógica en Sistemas**: Los sistemas individuales (Oracle, Dialogue, etc.) solo invocan métodos del servicio
+4. **Flexibilidad**: Soporte para templates predefinidos Y generación dinámica
+
+### Estructura del Servicio
+
+```typescript
+// Usar template predefinido
+const prompt = promptService.buildDialoguePrompt(
+  npcName, personality, role, context, options
+);
+
+// Generar prompt dinámico
+const prompt = promptService.buildDynamicPrompt(
+  'Instruction here',
+  { contextKey: value, ... },
+  { maxTokens: 100, temperature: 0.8 }
+);
+```
+
+### Beneficios
+
+- ✅ **Mantenibilidad**: Cambiar prompts sin tocar código
+- ✅ **Consistencia**: Mismo estilo y constraints en todos los prompts
+- ✅ **Testeo**: Fácil probar diferentes formulaciones
+- ✅ **Hot-reload**: Recargar configuración sin reiniciar app
+- ✅ **Extensibilidad**: Añadir nuevos templates sin modificar lógica

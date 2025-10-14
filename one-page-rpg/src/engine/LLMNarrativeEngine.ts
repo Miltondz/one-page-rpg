@@ -2,6 +2,7 @@ import { NarrativeEngine } from './NarrativeEngine';
 import type { Scene, Decision, GameState, PlayerState } from '../types';
 import { getLLMService } from '../services/llm';
 import type { LLMContext, NarrativeType } from '../services/llm';
+import { getPromptService } from '../services/PromptConfigService';
 
 /**
  * Motor Narrativo mejorado con integración de LLM
@@ -11,6 +12,7 @@ import type { LLMContext, NarrativeType } from '../services/llm';
  */
 export class LLMNarrativeEngine extends NarrativeEngine {
   private llmService = getLLMService({ debug: false });
+  private promptService = getPromptService();
   private llmEnabled = true;
 
   /**
@@ -33,20 +35,23 @@ export class LLMNarrativeEngine extends NarrativeEngine {
     }
 
     try {
-      // Construir contexto para el LLM
-      const context = this.buildLLMContext(playerState, gameState, scene);
+      // Usar template de descripción de escena desde el JSON
+      const builtPrompt = this.promptService.buildSceneDescriptionPrompt(
+        scene.location || 'Unknown location',
+        this.inferLocationType(scene),
+        gameState.world.mood || 'neutral',
+        gameState.world.weather
+      );
       
-      // Generar descripción enriquecida
-      const result = await this.llmService.generateNarrative({
-        context,
-        type: 'scene_description',
-        maxLength: 150,
-        temperature: 0.75,
-      });
+      if (!builtPrompt) {
+        throw new Error('Failed to build scene description prompt');
+      }
+      
+      const response = await this.llmService.generate(builtPrompt.prompt, builtPrompt.config);
 
       return {
         scene,
-        enhancedDescription: result.text,
+        enhancedDescription: response,
       };
     } catch (error) {
       console.warn('[LLMNarrativeEngine] Failed to enhance scene:', error);
@@ -69,19 +74,23 @@ export class LLMNarrativeEngine extends NarrativeEngine {
     }
 
     try {
-      const context = this.buildLLMContext(playerState, gameState, currentScene, {
-        presentNPCs: [npcName],
-      });
+      // Usar buildDynamicPrompt para diálogo dinámico
+      const builtPrompt = this.promptService.buildDynamicPrompt(
+        `Generate a SHORT response (1-2 sentences) from ${npcName} speaking about: ${topic}`,
+        {
+          speaker: npcName,
+          topic,
+          location: currentScene.location || 'unknown',
+          playerLevel: playerState.level,
+        },
+        {
+          maxTokens: 100,
+          temperature: 0.8,
+        }
+      );
 
-      const result = await this.llmService.generateNarrative({
-        context,
-        type: 'dialogue',
-        specificPrompt: `${npcName} habla sobre: ${topic}`,
-        maxLength: 100,
-        temperature: 0.8,
-      });
-
-      return result.text;
+      const response = await this.llmService.generate(builtPrompt.prompt, builtPrompt.config);
+      return response;
     } catch (error) {
       console.warn('[LLMNarrativeEngine] Failed to generate dialogue:', error);
       return `${npcName}: "Mmm..."`;
@@ -107,19 +116,23 @@ export class LLMNarrativeEngine extends NarrativeEngine {
         return this.getBasicCombatText(eventType);
       }
 
-      const context = this.buildLLMContext(playerState, gameState, currentScene, {
-        presentEnemies: enemyName ? [enemyName] : undefined,
-      });
+      // Usar buildDynamicPrompt para texto de combate
+      const builtPrompt = this.promptService.buildDynamicPrompt(
+        `Describe this combat moment in 1 SHORT dramatic sentence: ${this.getCombatPrompt(eventType, enemyName)}`,
+        {
+          eventType,
+          enemy: enemyName || 'enemy',
+          location: currentScene.location || 'battlefield',
+          playerHP: playerState.hp,
+        },
+        {
+          maxTokens: 80,
+          temperature: 0.85,
+        }
+      );
 
-      const result = await this.llmService.generateNarrative({
-        context,
-        type: 'combat_flavor',
-        specificPrompt: this.getCombatPrompt(eventType, enemyName),
-        maxLength: 80,
-        temperature: 0.85,
-      });
-
-      return result.text;
+      const response = await this.llmService.generate(builtPrompt.prompt, builtPrompt.config);
+      return response;
     } catch (error) {
       console.warn('[LLMNarrativeEngine] Failed to generate combat flavor:', error);
       return this.getBasicCombatText(eventType);
@@ -144,17 +157,21 @@ export class LLMNarrativeEngine extends NarrativeEngine {
         return `Encontraste: ${itemName}`;
       }
 
-      const context = this.buildLLMContext(playerState, gameState, currentScene);
+      // Usar buildDynamicPrompt para descubrimiento de item
+      const builtPrompt = this.promptService.buildDynamicPrompt(
+        `Describe discovering this item in 1 SHORT evocative sentence: ${itemName}`,
+        {
+          item: itemName,
+          location: currentScene.location || 'unknown place',
+        },
+        {
+          maxTokens: 60,
+          temperature: 0.7,
+        }
+      );
 
-      const result = await this.llmService.generateNarrative({
-        context,
-        type: 'item_discovery',
-        specificPrompt: itemName,
-        maxLength: 60,
-        temperature: 0.7,
-      });
-
-      return result.text;
+      const response = await this.llmService.generate(builtPrompt.prompt, builtPrompt.config);
+      return response;
     } catch (error) {
       console.warn('[LLMNarrativeEngine] Failed to generate item discovery:', error);
       return `Encontraste: ${itemName}`;
@@ -179,17 +196,22 @@ export class LLMNarrativeEngine extends NarrativeEngine {
         return 'Debo tener cuidado...';
       }
 
-      const context = this.buildLLMContext(playerState, gameState, currentScene);
+      // Usar buildDynamicPrompt para pensamiento del personaje
+      const builtPrompt = this.promptService.buildDynamicPrompt(
+        `Express the character's inner thought in 1 SHORT sentence about: ${situation}`,
+        {
+          situation,
+          characterClass: playerState.class,
+          currentHP: playerState.hp,
+        },
+        {
+          maxTokens: 50,
+          temperature: 0.75,
+        }
+      );
 
-      const result = await this.llmService.generateNarrative({
-        context,
-        type: 'character_thought',
-        specificPrompt: situation,
-        maxLength: 50,
-        temperature: 0.75,
-      });
-
-      return result.text;
+      const response = await this.llmService.generate(builtPrompt.prompt, builtPrompt.config);
+      return response;
     } catch (error) {
       console.warn('[LLMNarrativeEngine] Failed to generate thought:', error);
       return 'Debo tener cuidado...';
@@ -213,16 +235,22 @@ export class LLMNarrativeEngine extends NarrativeEngine {
         return '';
       }
 
-      const context = this.buildLLMContext(playerState, gameState, currentScene);
+      // Usar buildDynamicPrompt para detalle ambiental
+      const builtPrompt = this.promptService.buildDynamicPrompt(
+        'Add a SHORT atmospheric environmental detail (1 sentence) to enhance the scene',
+        {
+          location: currentScene.location || 'unknown',
+          weather: gameState.world.weather,
+          timeOfDay: gameState.world.timeOfDay,
+        },
+        {
+          maxTokens: 40,
+          temperature: 0.8,
+        }
+      );
 
-      const result = await this.llmService.generateNarrative({
-        context,
-        type: 'environmental_detail',
-        maxLength: 40,
-        temperature: 0.8,
-      });
-
-      return result.text;
+      const response = await this.llmService.generate(builtPrompt.prompt, builtPrompt.config);
+      return response;
     } catch (error) {
       console.warn('[LLMNarrativeEngine] Failed to generate environmental detail:', error);
       return '';

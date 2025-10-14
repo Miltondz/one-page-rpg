@@ -1,0 +1,273 @@
+{
+  "$schema": "./llm-prompts-schema.json",
+  "version": "1.0.0",
+  "lastUpdated": "2025-01-14",
+  "description": "Centralized LLM prompt templates for all game systems",
+  
+  "global": {
+    "systemContext": "You are a creative AI assistant helping to generate content for a fantasy text-based RPG game. Keep responses SHORT, vivid, and appropriate for the fantasy genre.",
+    "constraints": {
+      "maxLength": "Keep responses to 1-3 sentences unless specified otherwise.",
+      "tone": "Maintain an adventurous, mysterious, and engaging tone.",
+      "style": "Use descriptive language without being overly verbose."
+    }
+  },
+  
+  "dialogue": {
+    "greeting": {
+      "firstMeeting": {
+        "template": "You are {npcName}, a {personality} character with the role of {role}.\n\nContext: {context}\n\nThis is your first meeting with the player.\n\nGenerate a SHORT greeting (1-2 sentences) that fits your personality. Be natural and in-character.",
+        "variables": ["npcName", "personality", "role", "context"],
+        "config": {
+          "max_new_tokens": 100,
+          "temperature": 0.8,
+          "top_p": 0.9
+        }
+      },
+      "recurring": {
+        "template": "You are {npcName}, a {personality} character.\n\nYour history with the player:\n{memoryContext}\n\nCurrent situation: {context}\n\nGenerate a SHORT greeting (1-2 sentences) acknowledging your relationship. Be natural and in-character.",
+        "variables": ["npcName", "personality", "memoryContext", "context"],
+        "config": {
+          "max_new_tokens": 120,
+          "temperature": 0.8,
+          "top_p": 0.9
+        }
+      }
+    },
+    "standard": {
+      "template": "You are {npcName}, a {personality} character.\nYour role: {role}\n\n{memorySection}Current situation: {context}\n{actionSection}{topicSection}{toneSection}\nGenerate a SHORT dialogue response (1-2 sentences) that fits your personality and the situation. Be natural and in-character.",
+      "variables": ["npcName", "personality", "role", "memorySection", "context", "actionSection", "topicSection", "toneSection"],
+      "conditionalSections": {
+        "memorySection": {
+          "withMemory": "Your history with the player:\n{memoryContext}\n\n",
+          "withoutMemory": "This is your first meeting with the player.\n\n"
+        },
+        "actionSection": {
+          "withAction": "The player just: {playerAction}\n",
+          "withoutAction": ""
+        },
+        "topicSection": {
+          "withTopic": "Topic of conversation: {topic}\n",
+          "withoutTopic": ""
+        },
+        "toneSection": {
+          "withTone": "Speak in a {tone} tone.\n",
+          "withoutTone": ""
+        }
+      },
+      "config": {
+        "max_new_tokens": 150,
+        "temperature": 0.8,
+        "top_p": 0.9
+      }
+    },
+    "reaction": {
+      "template": "You are {npcName}, a {personality} character.\n\n{memoryContext}\n\nThe player just did: {playerAction}\nContext: {context}\n\nReact to this action in 1-2 sentences. Show emotion appropriate to your personality and relationship.",
+      "variables": ["npcName", "personality", "memoryContext", "playerAction", "context"],
+      "config": {
+        "max_new_tokens": 120,
+        "temperature": 0.85,
+        "top_p": 0.9
+      }
+    },
+    "quest": {
+      "offering": {
+        "template": "You are {npcName}, offering a quest.\n\n{memoryContext}\n\nQuest: {questDescription}\n\nExplain why you need help with this quest (1-2 sentences). Be compelling and in-character.",
+        "variables": ["npcName", "memoryContext", "questDescription"],
+        "config": {
+          "max_new_tokens": 130,
+          "temperature": 0.8,
+          "top_p": 0.9
+        }
+      },
+      "discussing": {
+        "template": "You are {npcName}.\n\n{memoryContext}\n\nThe player is asking about quest: {questDescription}\n\nProvide helpful information or encouragement (1-2 sentences).",
+        "variables": ["npcName", "memoryContext", "questDescription"],
+        "config": {
+          "max_new_tokens": 120,
+          "temperature": 0.8,
+          "top_p": 0.9
+        }
+      }
+    }
+  },
+  
+  "oracle": {
+    "interpretation": {
+      "template": "You are a mystical oracle interpreting fate.\n\nContext: {context}\nQuestion: \"{question}\"\nThe dice show {roll}, meaning: {resultExplanation}\n{historySection}\nProvide a SHORT, mysterious interpretation (1-2 sentences) that fits the result and context.{twistSection}",
+      "variables": ["context", "question", "roll", "resultExplanation", "historySection", "twistSection"],
+      "conditionalSections": {
+        "historySection": {
+          "withHistory": "\nRecent oracle consultations:\n{recentQueries}\n",
+          "withoutHistory": "\n"
+        },
+        "twistSection": {
+          "extremeRoll": "\nInclude a surprising twist or complication.",
+          "normalRoll": ""
+        }
+      },
+      "config": {
+        "max_new_tokens": 120,
+        "temperature": 0.9,
+        "top_p": 0.95
+      }
+    },
+    "resultExplanations": {
+      "yes-and": "Yes, and something extra happens in your favor",
+      "yes": "Yes, simply yes",
+      "yes-but": "Yes, but with a complication or cost",
+      "no-but": "No, but something positive emerges",
+      "no": "No, simply no",
+      "no-and": "No, and things get worse"
+    }
+  },
+  
+  "journal": {
+    "entry": {
+      "template": "You are writing a narrative journal entry for a fantasy adventure.\n\nEvent: {event}\nContext: {context}\nCategory: {category}\n{charactersSection}{previousEntriesSection}\nWrite a SHORT, evocative journal entry (2-3 sentences) from the player's perspective. Be descriptive and emotional.",
+      "variables": ["event", "context", "category", "charactersSection", "previousEntriesSection"],
+      "conditionalSections": {
+        "charactersSection": {
+          "withCharacters": "Characters involved: {characters}\n",
+          "withoutCharacters": ""
+        },
+        "previousEntriesSection": {
+          "withPrevious": "Previous entries:\n{previousEntries}\n",
+          "withoutPrevious": ""
+        }
+      },
+      "config": {
+        "max_new_tokens": 100,
+        "temperature": 0.85,
+        "top_p": 0.92
+      }
+    },
+    "summary": {
+      "template": "Summarize this adventurer's recent journey in 2-3 sentences:\n{recentEntries}",
+      "variables": ["recentEntries"],
+      "config": {
+        "max_new_tokens": 80,
+        "temperature": 0.7,
+        "top_p": 0.9
+      }
+    }
+  },
+  
+  "achievements": {
+    "contextDescription": {
+      "template": "An adventurer just unlocked the achievement \"{achievementName}\".\nAchievement description: {description}\nContext of unlock: {context}\n\nWrite a SHORT, celebratory message (1 sentence) describing this moment.",
+      "variables": ["achievementName", "description", "context"],
+      "config": {
+        "max_new_tokens": 60,
+        "temperature": 0.8,
+        "top_p": 0.9
+      }
+    }
+  },
+  
+  "narrative": {
+    "sceneDescription": {
+      "template": "Describe the following location in a fantasy setting:\n\nLocation: {location}\nType: {sceneType}\nMood: {mood}\n{weatherSection}\nGenerate a vivid, atmospheric description (2-3 sentences). Focus on sensory details.",
+      "variables": ["location", "sceneType", "mood", "weatherSection"],
+      "conditionalSections": {
+        "weatherSection": {
+          "withWeather": "Weather: {weather}\n",
+          "withoutWeather": ""
+        }
+      },
+      "config": {
+        "max_new_tokens": 120,
+        "temperature": 0.85,
+        "top_p": 0.92
+      }
+    },
+    "eventOutcome": {
+      "template": "The player attempted: {action}\nContext: {context}\nResult: {outcome}\n\nDescribe the outcome in 1-2 dramatic sentences.",
+      "variables": ["action", "context", "outcome"],
+      "config": {
+        "max_new_tokens": 90,
+        "temperature": 0.8,
+        "top_p": 0.9
+      }
+    },
+    "mysteryClue": {
+      "template": "Generate a cryptic clue related to:\n{mystery}\n\nContext: {context}\n\nMake it intriguing but not too obvious (1-2 sentences).",
+      "variables": ["mystery", "context"],
+      "config": {
+        "max_new_tokens": 80,
+        "temperature": 0.9,
+        "top_p": 0.95
+      }
+    }
+  },
+  
+  "combat": {
+    "enemyTaunt": {
+      "template": "{enemyName}, a {enemyType}, is in combat.\nEnemy personality: {personality}\nCombat situation: {situation}\n\nGenerate a SHORT taunt or battle cry (1 sentence).",
+      "variables": ["enemyName", "enemyType", "personality", "situation"],
+      "config": {
+        "max_new_tokens": 60,
+        "temperature": 0.85,
+        "top_p": 0.9
+      }
+    },
+    "victoryDescription": {
+      "template": "The player defeated {enemyName}.\nHow: {method}\nContext: {context}\n\nDescribe the moment of victory (1-2 sentences). Be dramatic.",
+      "variables": ["enemyName", "method", "context"],
+      "config": {
+        "max_new_tokens": 80,
+        "temperature": 0.8,
+        "top_p": 0.9
+      }
+    }
+  },
+  
+  "lore": {
+    "legendGeneration": {
+      "template": "Generate a brief legend about:\n{subject}\n\nSetting: {setting}\nTone: {tone}\n\nCreate a mysterious legend (2-3 sentences) that fits the fantasy world.",
+      "variables": ["subject", "setting", "tone"],
+      "config": {
+        "max_new_tokens": 110,
+        "temperature": 0.9,
+        "top_p": 0.95
+      }
+    },
+    "ancientText": {
+      "template": "Generate an ancient text or inscription about:\n{topic}\n\nStyle: {style}\n\nMake it cryptic and archaic (1-2 sentences).",
+      "variables": ["topic", "style"],
+      "config": {
+        "max_new_tokens": 90,
+        "temperature": 0.9,
+        "top_p": 0.95
+      }
+    }
+  },
+  
+  "fallbackSettings": {
+    "description": "Default settings when specific configs are not provided",
+    "config": {
+      "max_new_tokens": 100,
+      "temperature": 0.8,
+      "top_p": 0.9,
+      "repetition_penalty": 1.1
+    }
+  },
+  
+  "metadata": {
+    "model": "HuggingFaceTB/SmolLM-360M-Instruct",
+    "optimizedFor": "SmolLM-360M",
+    "notes": [
+      "Prompts are optimized for short-form generation",
+      "All templates use {variable} syntax for replacements",
+      "Conditional sections allow dynamic prompt building",
+      "Temperature values are tuned for creative yet coherent output"
+    ],
+    "guidelines": [
+      "Always keep prompts concise to save tokens",
+      "Use clear, direct instructions",
+      "Specify desired length explicitly",
+      "Provide context before asking for generation",
+      "Use conditional sections to avoid unnecessary tokens"
+    ]
+  }
+}
