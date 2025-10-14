@@ -1,5 +1,5 @@
 import { SeededRandom } from '../utils/SeededRandom';
-import type { NPC } from '../types/npc';
+import type { NPC, NPCArchetype } from '../types/npc';
 
 /**
  * Motivación de un NPC
@@ -421,13 +421,19 @@ export class NPCGenerator {
     return {
       id: this.rng.uuid(),
       name: profile.name,
-      archetype: profile.archetype,
+      archetype: profile.archetype as NPCArchetype,
       race: 'human',
+      relationship: 0,
       location,
+      mood: 'neutral',
+      knowledge: [],
+      questsGiven: [],
+      interactions: [],
+      isAlive: true,
+      isMet: false,
       faction,
-      personality: profile.personality,
       role: profile.archetype,
-      description: `${profile.name}, ${profile.age} años. ${profile.quirk}`,
+      personality: profile.personality, // Include personality from generated profile
     };
   }
 }

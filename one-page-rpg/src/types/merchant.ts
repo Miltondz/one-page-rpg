@@ -2,7 +2,7 @@
  * Merchant Types - Tipos para el sistema de comercio
  */
 
-import type { Item } from './item';
+// Types for merchant system
 
 /**
  * Tipo de comerciante

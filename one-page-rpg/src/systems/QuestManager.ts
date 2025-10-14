@@ -5,8 +5,10 @@
  * como misiones generadas proceduralmente (2d6)
  */
 
-import { QuestSystem, Quest, QuestObjective } from './QuestSystem';
-import { QuestLoader, QuestJSON, BranchJSON, ConsequenceJSON } from './QuestLoader';
+import { QuestSystem } from './QuestSystem';
+import type { Quest, QuestObjective } from './QuestSystem';
+import { QuestLoader } from './QuestLoader';
+import type { QuestJSON, BranchJSON, ConsequenceJSON } from './QuestLoader';
 import type { SeededRandom } from '../utils/SeededRandom';
 
 /**

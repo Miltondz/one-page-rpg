@@ -1,6 +1,6 @@
-import type { Player } from '../../types/Player';
-import type { WorldState } from '../../types/World';
-import type { Item } from '../../types/Item';
+import type { Player } from '../../types/player';
+import type { WorldState } from '../../types/world';
+import type { Item } from '../../types/item';
 
 /**
  * Contexto completo del juego para el LLM

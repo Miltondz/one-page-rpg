@@ -15,5 +15,10 @@ export { default as SaveGameManager } from './SaveGameManager';
 export { default as CombatView } from './CombatView';
 export { default as InventoryView } from './InventoryView';
 
+// Componentes visuales
+export { default as DiceOutcomeDisplay } from './DiceOutcomeDisplay';
+export { default as ReputationIndicator } from './ReputationIndicator';
+export { default as DialogueView } from './DialogueView';
+
 // Placeholder exports para componentes futuros
 // export { OptionsScreen } from './OptionsScreen';

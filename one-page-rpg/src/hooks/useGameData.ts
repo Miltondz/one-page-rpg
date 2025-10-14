@@ -39,7 +39,7 @@ export function useGameData<T>(dataPath: string) {
  * Hook para cargar múltiples archivos JSON
  */
 export function useMultipleGameData(dataPaths: Record<string, string>) {
-  const [data, setData] = useState<Record<string, any>>({});
+  const [data, setData] = useState<Record<string, unknown>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -47,7 +47,7 @@ export function useMultipleGameData(dataPaths: Record<string, string>) {
     const loadAllData = async () => {
       try {
         setLoading(true);
-        const results: Record<string, any> = {};
+        const results: Record<string, unknown> = {};
 
         await Promise.all(
           Object.entries(dataPaths).map(async ([key, path]) => {
@@ -70,6 +70,7 @@ export function useMultipleGameData(dataPaths: Record<string, string>) {
     };
 
     loadAllData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(dataPaths)]);
 
   return { data, loading, error };

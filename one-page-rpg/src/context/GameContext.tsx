@@ -1,13 +1,12 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { GameState, PlayerState, Scene, Decision } from '../types';
+import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import type { GameState, PlayerState, Scene, Decision } from '../types';
 import { NarrativeEngine } from '../engine/NarrativeEngine';
 import { useMultipleGameData } from '../hooks/useGameData';
 import { QuestManager } from '../systems/QuestManager';
 import { ProgressionSystem } from '../systems/ProgressionSystem';
 import { SeededRandom } from '../utils/SeededRandom';
 import { SaveSystem } from '../utils/SaveSystem';
-import type { Quest, QuestObjective } from '../systems/QuestSystem';
-import type { ConsequenceJSON } from '../systems/QuestLoader';
+import type { Quest } from '../systems/QuestSystem';
 
 interface GameContextType {
   gameState: GameState | null;
@@ -20,7 +19,7 @@ interface GameContextType {
   error: Error | null;
   
   // Actions
-  initializeGame: (playerName: string, attributes: any) => void;
+  initializeGame: (playerName: string, attributes: Record<string, number>) => void;
   loadScene: (sceneId: string) => void;
   makeDecision: (decision: Decision) => Promise<void>;
   updatePlayerState: (updates: Partial<PlayerState>) => void;
@@ -78,21 +77,31 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       try {
         // Combinar escenas de ambas partes
         const allScenes = {
-          ...data.scenes_part1?.scenes || {},
-          ...data.scenes_part2?.scenes || {},
+          ...(data.scenes_part1 as any)?.scenes || {},
+          ...(data.scenes_part2 as any)?.scenes || {},
         };
 
-        // Crear estado inicial del juego
-        const initialGameState: GameState = {
-          player: null as any, // Se inicializará después
+        // Crear estado inicial del juego (no usado directamente, reservado para futuro)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/naming-convention
+        const _initialGameState: GameState = {
+          player: null as unknown as PlayerState, // Se inicializará después
           currentSceneId: 'scene_01_intro',
           currentLocation: 'murogris_guarida_alenko',
           questStates: {},
-          worldState: {
-            factionRelationships: {},
-            globalFlags: {},
-            timeElapsed: 0,
-          },
+        worldState: {
+          factionRelationships: {},
+          globalFlags: {},
+          timeElapsed: 0,
+          completedQuests: [],
+          unlockedAchievements: [],
+          discoveredLocations: [],
+          knownNPCs: [],
+          enemiesDefeated: {},
+          timeOfDay: 'day',
+          weather: 'clear',
+          currentWorld: 'griswald',
+          currentAct: 0,
+        },
           eventLog: [],
           saveMetadata: {
             version: '0.1.0',
@@ -101,7 +110,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           },
         };
 
-        const engine = new NarrativeEngine(allScenes, initialGameState);
+        const engine = new NarrativeEngine(allScenes);
         setNarrativeEngine(engine);
         
         // Inicializar RNG
@@ -139,7 +148,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   /**
    * Inicializar el juego con un nuevo personaje
    */
-  const initializeGame = (playerName: string, attributes: any) => {
+  const initializeGame = (playerName: string, attributes: Record<string, number>) => {
     if (!narrativeEngine) {
       console.error('Narrative engine not initialized');
       return;
@@ -148,15 +157,18 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const initialPlayer: PlayerState = {
       name: playerName,
       level: 1,
+      xp: 0,
       experience: 0,
+      xpToNextLevel: 3,
       experienceToNextLevel: 3,
-      attributes,
+      attributes: attributes as any,
       wounds: 3,
       maxWounds: 3,
       fatigue: 3,
       maxFatigue: 3,
       gold: 0,
       inventory: [],
+      inventorySlots: 10,
       equippedItems: {},
       statusEffects: [],
     };
@@ -179,6 +191,15 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         factionRelationships: {},
         globalFlags: {},
         timeElapsed: 0,
+        completedQuests: [],
+        unlockedAchievements: [],
+        discoveredLocations: ['murogris_guarida_alenko'],
+        knownNPCs: [],
+        enemiesDefeated: {},
+        timeOfDay: 'day',
+        weather: 'clear',
+        currentWorld: 'griswald',
+        currentAct: 0,
       },
       eventLog: [
         {
@@ -269,7 +290,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     setGameState({
       ...gameState,
-      eventLog: [...gameState.eventLog, newEvent],
+      eventLog: [...(gameState.eventLog || []), newEvent],
     });
 
     // Si hubo tirada de dados, mostrar resultado
@@ -425,42 +446,41 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
    * Ganar experiencia y manejar subidas de nivel
    */
   const gainExperience = (amount: number) => {
-    if (!progressionSystem || !playerState) return;
+    if (!playerState) return;
 
     console.log(`⭐ +${amount} XP`);
     
-    const levelUpResult = progressionSystem.addExperience(playerState, amount);
+    const levelUpResults = ProgressionSystem.addExperience(playerState, amount);
     
-    if (levelUpResult.leveledUp) {
-      console.log(`🎊 ¡LEVEL UP! Nivel ${levelUpResult.newLevel}`);
-      console.log(`📊 Recompensas:`);
-      console.log(`  • ${levelUpResult.rewards.attributePoints} puntos de atributo`);
-      console.log(`  • ${levelUpResult.rewards.healing} curación`);
-      console.log(`  • ${levelUpResult.rewards.inventorySlots} slots de inventario`);
-      console.log(`  • ${levelUpResult.rewards.gold} oro`);
-      
-      // Las recompensas ya se aplicaron en el playerState por referencia
-      // Solo necesitamos actualizar el estado
-      setPlayerState({ ...playerState });
-    } else {
-      // Actualizar solo XP
-      setPlayerState({ ...playerState });
+    if (levelUpResults.length > 0) {
+      levelUpResults.forEach(levelUpResult => {
+        console.log(`🎊 ¡LEVEL UP! Nivel ${levelUpResult.newLevel}`);
+        console.log(`📊 Recompensas:`);
+        console.log(`  • ${levelUpResult.rewards.attributePoints} puntos de atributo`);
+        console.log(`  • ${levelUpResult.rewards.healWounds} curación de heridas`);
+        console.log(`  • ${levelUpResult.rewards.inventorySlots} slots de inventario`);
+        console.log(`  • ${levelUpResult.rewards.goldBonus} oro`);
+      });
     }
+    
+    // Las recompensas ya se aplicaron en el playerState por referencia
+    // Solo necesitamos actualizar el estado
+    setPlayerState({ ...playerState });
   };
 
   /**
    * Aplicar punto de atributo
    */
   const applyAttributePoint = (attribute: 'FUE' | 'AGI' | 'SAB' | 'SUE') => {
-    if (!progressionSystem || !playerState) return;
+    if (!playerState) return;
 
-    const success = progressionSystem.applyAttributePoint(playerState, attribute);
+    const result = ProgressionSystem.applyAttributePoint(playerState, attribute);
     
-    if (success) {
+    if (result.success) {
       console.log(`✨ +1 ${attribute}`);
       setPlayerState({ ...playerState });
     } else {
-      console.warn('No tienes puntos de atributo disponibles');
+      console.warn(result.message);
     }
   };
 
@@ -483,7 +503,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       };
 
       // Guardar
-      const success = SaveSystem.saveToLocalStorage(extendedState as any, rng, slot);
+      const success = SaveSystem.saveToLocalStorage(extendedState as GameState, rng, slot);
       
       if (success) {
         console.log(`💾 Game saved to slot: ${slot}`);
@@ -515,12 +535,12 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       // Restaurar estado base
       setGameState(result.gameState);
-      setPlayerState(result.gameState.player as any);
+      setPlayerState(result.gameState.player as PlayerState);
       
       // Restaurar quests si existen
-      const extendedState = result.gameState as any;
+      const extendedState = result.gameState as GameState & { questData?: any };
       if (extendedState.questData) {
-        questManager.deserialize(extendedState.questData);
+        questManager.deserialize(extendedState.questData as any);
       }
       
       console.log(`📂 Game loaded from slot: ${slot}`);
@@ -588,6 +608,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 /**
  * Hook para usar el contexto del juego
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export const useGame = () => {
   const context = useContext(GameContext);
   if (context === undefined) {

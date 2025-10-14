@@ -10,7 +10,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { CombatEngine, type CombatState, type PlayerCombatAction, type CombatActionResult, type CombatEnemy } from '../engine/CombatEngine';
+import { CombatEngine, type CombatState, type PlayerCombatAction, type CombatEnemy } from '../engine/CombatEngine';
 import type { Player, Enemy } from '../types';
 
 interface CombatViewProps {
@@ -27,8 +27,6 @@ interface CombatViewProps {
     playerState: Player;
   }) => void;
   
-  /** Callback para usar un item del inventario */
-  onUseItem?: (itemId: string) => boolean;
 }
 
 interface AnimatedDamage {
@@ -42,19 +40,20 @@ export const CombatView: React.FC<CombatViewProps> = ({
   player,
   enemies,
   onCombatEnd,
-  onUseItem,
 }) => {
   const [combatEngine] = useState(() => new CombatEngine(
     {
       name: player.name,
       level: player.level,
+      xp: player.xp,
       experience: player.xp,
+      xpToNextLevel: player.xpToNextLevel,
       experienceToNextLevel: player.xpToNextLevel,
       attributes: {
-        FUE: player.attributes.strength || 0,
-        AGI: player.attributes.agility || 0,
-        SAB: player.attributes.intelligence || 0,
-        SUE: player.attributes.luck || 0,
+        FUE: player.attributes.FUE || 0,
+        AGI: player.attributes.AGI || 0,
+        SAB: player.attributes.SAB || 0,
+        SUE: player.attributes.SUE || 0,
       },
       wounds: player.wounds,
       maxWounds: player.maxWounds,
@@ -62,18 +61,11 @@ export const CombatView: React.FC<CombatViewProps> = ({
       maxFatigue: player.maxFatigue,
       gold: player.gold,
       inventory: player.inventory,
-      equippedItems: {},
-      statusEffects: [],
+      inventorySlots: player.inventorySlots,
+      equippedItems: player.equippedItems || {},
+      statusEffects: player.statusEffects || [],
     },
-    enemies.map(e => ({
-      id: e.id,
-      name: e.name,
-      level: e.level || 1,
-      stats: e.stats,
-      abilities: e.abilities,
-      loot_table: e.loot_table,
-      description: e.description || '',
-    }))
+    enemies
   ));
 
   const [combatState, setCombatState] = useState<CombatState>(combatEngine.getState());

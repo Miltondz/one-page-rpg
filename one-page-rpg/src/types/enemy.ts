@@ -1,4 +1,4 @@
-import type { Attributes } from './attributes';
+// Types for enemy definitions
 
 /**
  * Habilidad especial de un enemigo

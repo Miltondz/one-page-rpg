@@ -161,9 +161,9 @@ function generateCombatFlavor(context: LLMContext): string {
   // Determinar atributo más alto
   const attrs = player.attributes;
   let highestAttr = 'fuerza';
-  if (attrs.agility > attrs.strength && attrs.agility > attrs.intelligence) {
+  if (attrs.AGI > attrs.FUE && attrs.AGI > attrs.SAB) {
     highestAttr = 'agilidad';
-  } else if (attrs.intelligence > attrs.strength && attrs.intelligence > attrs.agility) {
+  } else if (attrs.SAB > attrs.FUE && attrs.SAB > attrs.AGI) {
     highestAttr = 'inteligencia';
   }
   
@@ -173,7 +173,7 @@ function generateCombatFlavor(context: LLMContext): string {
 /**
  * Genera descubrimiento de item procedural
  */
-function generateItemDiscovery(context: LLMContext, specific?: string): string {
+function generateItemDiscovery(_context: LLMContext, specific?: string): string {
   const item = specific || 'un objeto';
   
   const templates = [

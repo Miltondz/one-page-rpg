@@ -1,5 +1,5 @@
-import { PlayerState, Enemy } from '../types';
-import { DiceSystem, createDiceSystem, RollOutcome } from '../utils/DiceSystem';
+import type { PlayerState, Enemy } from '../types';
+import { DiceSystem, createDiceSystem, type RollOutcome } from '../utils/DiceSystem';
 import { SeededRandom } from '../utils/SeededRandom';
 
 /**
@@ -18,9 +18,15 @@ export interface CombatState {
  * Enemigo en combate con estado adicional
  */
 export interface CombatEnemy extends Enemy {
-  currentWounds: number;
   statusEffects: StatusEffect[];
   isDead: boolean;
+  
+  // Helper properties para acceso rápido
+  readonly id: string;
+  readonly name: string;
+  readonly level: number;
+  readonly stats: import('../types').EnemyStats;
+  readonly loot_table?: import('../types').LootTable;
 }
 
 /**
@@ -91,10 +97,16 @@ export class CombatEngine {
       player,
       enemies: enemies.map(enemy => ({
         ...enemy,
-        currentWounds: enemy.stats?.Heridas || 3,
+        currentWounds: enemy.definition.stats.Heridas,
         statusEffects: [],
         isDead: false,
-      })),
+        // Helper properties
+        id: enemy.instanceId,
+        name: enemy.definition.name,
+        level: enemy.definition.level,
+        stats: enemy.definition.stats,
+        loot_table: enemy.definition.lootTable,
+      } as CombatEnemy)),
       turn: 1,
       phase: 'player',
       combatLog: [{
@@ -139,7 +151,7 @@ export class CombatEngine {
         result = this.playerDefend();
         break;
       case 'use_item':
-        result = this.playerUseItem(action.itemId, action.targetIndex);
+        result = this.playerUseItem(action.itemId);
         break;
       case 'flee':
         result = this.playerFlee();
@@ -238,7 +250,7 @@ export class CombatEngine {
     );
 
     const critical = rollResult.outcome === 'critical_success';
-    const partialSuccess = rollResult.outcome === 'partial_success';
+    // const partialSuccess = rollResult.outcome === 'partial_success'; // Not used yet
 
     if (rollResult.success) {
       // Aplicar daño
@@ -302,7 +314,7 @@ export class CombatEngine {
   /**
    * Usar item en combate
    */
-  private playerUseItem(itemId: string, targetIndex?: number): CombatActionResult {
+  private playerUseItem(itemId: string): CombatActionResult {
     // TODO: Implementar uso de items (pociones, etc.)
     
     if (itemId === 'pocion_curacion') {
@@ -407,11 +419,13 @@ export class CombatEngine {
    */
   private processStatusEffects(): void {
     // Procesar efectos del jugador
-    this.state.player.statusEffects = this.state.player.statusEffects.filter(effect => {
+    this.state.player.statusEffects = this.state.player.statusEffects?.filter(effect => {
       // TODO: Aplicar efectos (veneno, etc.)
-      effect.duration--;
-      return effect.duration > 0;
-    });
+      if (effect.duration !== undefined) {
+        effect.duration--;
+      }
+      return effect.duration ? effect.duration > 0 : false;
+    }) || [];
 
     // Procesar efectos de enemigos
     this.state.enemies.forEach(enemy => {

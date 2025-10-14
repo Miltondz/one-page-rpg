@@ -48,6 +48,12 @@ export interface NPC {
   /** Arquetipo del NPC */
   archetype: NPCArchetype;
 
+  /** Facción a la que pertenece (opcional) */
+  faction?: string;
+
+  /** Rol o profesión del NPC (opcional) */
+  role?: string;
+
   /** Raza del NPC */
   race: string;
 
@@ -74,6 +80,9 @@ export interface NPC {
 
   /** Si el NPC ha sido conocido por el jugador */
   isMet: boolean;
+  
+  /** Rasgos de personalidad (opcional) */
+  personality?: string[];
 }
 
 /**

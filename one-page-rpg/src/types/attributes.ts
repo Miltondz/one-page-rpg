@@ -14,6 +14,11 @@ export interface Attributes {
 }
 
 /**
+ * Alias para PlayerAttributes (mismo que Attributes)
+ */
+export type PlayerAttributes = Attributes;
+
+/**
  * Atributos base para inicio del personaje
  */
 export const INITIAL_ATTRIBUTE_POINTS = 6;

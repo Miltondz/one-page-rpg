@@ -56,11 +56,11 @@ export const SaveGameManager: React.FC<SaveGameManagerProps> = ({
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [confirmAction, setConfirmAction] = useState<'save' | 'load' | 'delete' | null>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-  const [newSaveName, setNewSaveName] = useState('');
 
   // Cargar lista de saves
   useEffect(() => {
     loadSaveSlots();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /**
@@ -167,7 +167,7 @@ export const SaveGameManager: React.FC<SaveGameManagerProps> = ({
       
       if (loadResult.success && loadResult.gameState) {
         // Reconstruir RNG
-        const rng = new SeededRandom(loadResult.gameState.world.seed);
+        const rng = new SeededRandom(loadResult.gameState.world?.seed || `fallback-${Date.now()}`);
         
         setMessage({ type: 'success', text: `Partida cargada desde ${selectedSlot}` });
         

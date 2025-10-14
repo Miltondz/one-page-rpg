@@ -4,7 +4,7 @@
  * Maneja XP, level-ups, rewards y progresión de atributos
  */
 
-import type { Player } from '../types/Player';
+import type { Player } from '../types/player';
 import type { Attributes } from '../types/attributes';
 
 /**
@@ -81,6 +81,7 @@ export class ProgressionSystem {
     
     // Añadir XP
     player.xp += amount;
+    player.experience = player.xp; // Sincronizar alias
     
     // Procesar level-ups en cadena
     while (player.xp >= player.xpToNextLevel && player.level < this.MAX_LEVEL) {
@@ -89,6 +90,13 @@ export class ProgressionSystem {
     }
     
     return results;
+  }
+  
+  /**
+   * Alias para addXP (compatibilidad)
+   */
+  static addExperience(player: Player, amount: number): LevelUpResult[] {
+    return this.addXP(player, amount);
   }
 
   /**
@@ -271,10 +279,10 @@ export class ProgressionSystem {
     power += player.level * 10;
     
     // Atributos
-    power += player.attributes.strength * 5;
-    power += player.attributes.agility * 5;
-    power += player.attributes.intelligence * 5;
-    power += player.attributes.luck * 3;
+    power += player.attributes.FUE * 5;
+    power += player.attributes.AGI * 5;
+    power += player.attributes.SAB * 5;
+    power += player.attributes.SUE * 3;
     
     // Salud actual
     power += player.wounds * 2;
@@ -306,10 +314,10 @@ export class ProgressionSystem {
       player.attributes = savedAttributes;
     } else {
       player.attributes = {
-        strength: 2,
-        agility: 2,
-        intelligence: 1,
-        luck: 1,
+        FUE: 2,
+        AGI: 2,
+        SAB: 1,
+        SUE: 1,
       };
     }
   }

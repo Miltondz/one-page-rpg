@@ -66,7 +66,7 @@ export const Modal: React.FC<ModalProps> = ({
       onClick={handleBackdropClick}
     >
       <div className={`w-full ${sizeClasses[size]} animate-slideUp`}>
-        <RPGUIContainer variant="framed">
+        <RPGUIContainer frameType="framed">
           {/* Header */}
           <div className="flex items-center justify-between mb-4 pb-3 border-b-2 border-gray-600">
             <h2 className="text-yellow-400 text-lg font-bold text-shadow">
@@ -136,12 +136,12 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
         <div className="text-6xl">{icons[variant]}</div>
         <p className="text-gray-300 text-sm leading-relaxed">{message}</p>
         <div className="flex gap-4 justify-center">
-          <RPGUIButton onClick={onCancel} variant="normal">
+          <RPGUIButton onClick={onCancel}>
             {cancelText}
           </RPGUIButton>
           <RPGUIButton 
             onClick={onConfirm} 
-            variant={variant === 'danger' ? 'normal' : 'golden'}
+            golden={variant !== 'danger'}
           >
             {confirmText}
           </RPGUIButton>

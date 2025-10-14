@@ -64,16 +64,16 @@ export class LLMService {
 
       // Cargar el modelo de generación de texto
       this.model = await pipeline('text-generation', this.config.modelId, {
-        // @ts-ignore - Opciones específicas de Transformers.js
+        // @ts-expect-error - Opciones específicas de Transformers.js
         cache_dir: this.config.useCache ? undefined : null,
-        progress_callback: (progress: any) => {
+        progress_callback: (progress: { status?: string; file?: string; progress?: number }) => {
           if (this.config.debug && progress?.status === 'progress') {
             console.log(
               `[LLMService] Loading: ${progress.file} - ${Math.round(progress.progress || 0)}%`
             );
           }
         },
-      });
+      }) as Pipeline;
 
       const loadTime = Date.now() - startTime;
       

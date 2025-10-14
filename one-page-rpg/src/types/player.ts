@@ -12,9 +12,15 @@ export interface Player {
 
   /** Puntos de experiencia acumulados */
   xp: number;
+  
+  /** Puntos de experiencia acumulados (alias de xp) */
+  experience: number;
 
   /** XP necesarios para subir de nivel */
   xpToNextLevel: number;
+  
+  /** XP necesarios para subir de nivel (alias de xpToNextLevel) */
+  experienceToNextLevel: number;
 
   /** Atributos del personaje */
   attributes: Attributes;
@@ -39,13 +45,29 @@ export interface Player {
 
   /** Oro actual */
   gold: number;
+  
+  /** Items equipados (opcional) */
+  equippedItems?: Record<string, string>;
+  
+  /** Efectos de estado activos (opcional) */
+  statusEffects?: Array<{
+    id: string;
+    name: string;
+    duration: number;
+    effect: string;
+  }>;
 
   /** Raza del personaje (por ahora solo 'human') */
-  race: string;
+  race?: string;
 
   /** Clase del personaje (por ahora solo 'adventurer') */
-  class: string;
+  class?: string;
 }
+
+/**
+ * Alias para PlayerState (mismo que Player)
+ */
+export type PlayerState = Player;
 
 /**
  * Constantes para el jugador

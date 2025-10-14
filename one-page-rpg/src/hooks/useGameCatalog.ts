@@ -68,7 +68,7 @@ export const useGameCatalog = (): UseGameCatalogReturn => {
         const enemiesResponse = await fetch(CATALOG_PATHS.enemies);
         if (!enemiesResponse.ok) throw new Error('Failed to load enemies catalog');
         const enemiesData = await enemiesResponse.json();
-        const enemies: EnemyCatalog = indexById(enemiesData.creatures || []);
+        const enemies = indexById(enemiesData.creatures || []) as unknown as EnemyCatalog;
         loadedCount++;
         if (isMounted) setState(prev => ({ ...prev, progress: (loadedCount / totalCatalogs) * 100 }));
 

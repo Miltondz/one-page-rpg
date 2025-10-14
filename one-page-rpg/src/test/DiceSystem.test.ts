@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createDiceSystem, DiceSystem, RollOutcome } from '../utils/DiceSystem';
+import { createDiceSystem } from '../utils/DiceSystem';
+import type { DiceSystem, RollOutcome } from '../utils/DiceSystem';
 import { SeededRandom } from '../utils/SeededRandom';
 
 describe('DiceSystem', () => {
@@ -196,7 +197,7 @@ describe('DiceSystem', () => {
 
   describe('combatRoll', () => {
     it('debe calcular daño basado en outcome', () => {
-      let damageResults: Record<RollOutcome, number[]> = {
+      const damageResults: Record<RollOutcome, number[]> = {
         critical_failure: [],
         partial_success: [],
         success: [],
@@ -337,7 +338,7 @@ describe('DiceSystem', () => {
       const dice2 = createDiceSystem(rng2);
 
       const results1 = [];
-      const results2 = [];
+      const results2: number[] = [];
 
       for (let i = 0; i < 10; i++) {
         results1.push(dice1.roll(3, 7, 'none', 0).total);

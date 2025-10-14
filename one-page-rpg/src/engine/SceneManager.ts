@@ -27,7 +27,7 @@ export interface SceneTransition {
   giveItems?: string[];
   removeItems?: string[];
   modifyReputation?: Record<string, number>;
-  setFlags?: Record<string, any>;
+  setFlags?: Record<string, boolean | number | string>;
   completeQuest?: string;
   startQuest?: string;
   narrativeText?: string;
@@ -101,7 +101,7 @@ export class SceneManager {
 
     // Aplicar consecuencias
     if (decision.consequences) {
-      this.applyConsequences(decision.consequences, transition);
+      this.applyConsequences(decision.consequences as any, transition);
     }
 
     // Actualizar historial
@@ -130,38 +130,41 @@ export class SceneManager {
   /**
    * Evalúa condiciones para mostrar una decisión
    */
-  private evaluateConditions(conditions?: Record<string, any>): boolean {
+  private evaluateConditions(conditions?: Record<string, unknown>): boolean {
     if (!conditions) return true;
 
     // Evaluar cada condición
     for (const [key, value] of Object.entries(conditions)) {
       switch (key) {
         case 'minLevel':
-          if (this.context.playerLevel < value) return false;
+          if (this.context.playerLevel < (value as number)) return false;
           break;
         
         case 'hasItem':
-          if (!this.context.inventory.includes(value)) return false;
+          if (!this.context.inventory.includes(value as string)) return false;
           break;
         
         case 'completedQuest':
-          if (!this.context.completedQuests.includes(value)) return false;
+          if (!this.context.completedQuests.includes(value as string)) return false;
           break;
         
-        case 'minReputation':
+        case 'minReputation': {
           const [faction, minRep] = value as [string, number];
           if ((this.context.reputation[faction] || 0) < minRep) return false;
           break;
+        }
         
-        case 'flag':
-          const [flagName, flagValue] = value as [string, any];
+        case 'flag': {
+          const [flagName, flagValue] = value as [string, boolean | number | string];
           if (this.context.globalFlags[flagName] !== flagValue) return false;
           break;
+        }
         
-        case 'attribute':
+        case 'attribute': {
           const [attr, minValue] = value as [string, number];
           if ((this.context.playerAttributes[attr] || 0) < minValue) return false;
           break;
+        }
       }
     }
 
@@ -171,34 +174,34 @@ export class SceneManager {
   /**
    * Aplica consecuencias de una decisión
    */
-  private applyConsequences(consequences: any, transition: SceneTransition): void {
+  private applyConsequences(consequences: Record<string, unknown>, transition: SceneTransition): void {
     if (consequences.triggerCombat) {
       transition.triggerCombat = true;
-      transition.enemies = consequences.enemies || [];
+      transition.enemies = (consequences.enemies as string[]) || [];
     }
 
     if (consequences.giveItems) {
-      transition.giveItems = consequences.giveItems;
+      transition.giveItems = consequences.giveItems as string[];
     }
 
     if (consequences.removeItems) {
-      transition.removeItems = consequences.removeItems;
+      transition.removeItems = consequences.removeItems as string[];
     }
 
     if (consequences.modifyReputation) {
-      transition.modifyReputation = consequences.modifyReputation;
+      transition.modifyReputation = consequences.modifyReputation as Record<string, number>;
     }
 
     if (consequences.setFlags) {
-      transition.setFlags = consequences.setFlags;
+      transition.setFlags = consequences.setFlags as Record<string, boolean | number | string>;
     }
 
     if (consequences.completeQuest) {
-      transition.completeQuest = consequences.completeQuest;
+      transition.completeQuest = consequences.completeQuest as string;
     }
 
     if (consequences.startQuest) {
-      transition.startQuest = consequences.startQuest;
+      transition.startQuest = consequences.startQuest as string;
     }
   }
 
@@ -249,8 +252,7 @@ export class SceneManager {
 
     // Añadir quests activas relacionadas
     const relatedQuests = this.context.activeQuests.filter(q => 
-      q.location === this.context.location || 
-      q.targetLocation === this.context.location
+      q.startingLocation === this.context.location
     );
 
     if (relatedQuests.length > 0) {

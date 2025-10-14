@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { RPGUIContainer, RPGUIButton, RPGUIInput } from '../ui';
-import { PlayerAttributes } from '../types';
+import type { PlayerAttributes } from '../types';
 
 interface CharacterCreationProps {
   onComplete: (name: string, attributes: PlayerAttributes) => void;
@@ -88,7 +88,7 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({
           </p>
         </div>
 
-        <RPGUIContainer variant="framed-golden">
+        <RPGUIContainer frameType="framed-golden">
           {/* STEP 1: Nombre */}
           {step === 1 && (
             <div className="space-y-6">
@@ -109,10 +109,8 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({
                   </span>
                   <RPGUIInput
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(value) => setName(value)}
                     placeholder="Escribe tu nombre..."
-                    maxLength={20}
-                    autoFocus
                   />
                 </label>
 
@@ -197,18 +195,18 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({
           {/* Actions */}
           <div className="flex gap-4 mt-6 pt-6 border-t-2 border-gray-700">
             {step === 2 && (
-              <RPGUIButton onClick={() => setStep(1)} variant="normal">
+              <RPGUIButton onClick={() => setStep(1)}>
                 ← Atrás
               </RPGUIButton>
             )}
             {step === 1 && onBack && (
-              <RPGUIButton onClick={onBack} variant="normal">
+              <RPGUIButton onClick={onBack}>
                 ← Menu
               </RPGUIButton>
             )}
             <RPGUIButton
               onClick={handleNext}
-              variant="golden"
+              golden
               disabled={!canProceed}
               className="ml-auto"
             >

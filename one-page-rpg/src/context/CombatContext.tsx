@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { PlayerState, Enemy } from '../types';
-import { CombatEngine, CombatState, PlayerCombatAction, CombatActionResult } from '../engine/CombatEngine';
+import React, { createContext, useContext, useState, type ReactNode } from 'react';
+import type { PlayerState, Enemy } from '../types';
+import { CombatEngine, type CombatState, type PlayerCombatAction, type CombatActionResult } from '../engine/CombatEngine';
 
 interface CombatContextType {
   isInCombat: boolean;
@@ -34,7 +34,7 @@ export const CombatProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     
     console.log('⚔️ Combat started!');
     console.log('👤 Player:', player.name, `(${player.wounds}/${player.maxWounds} HP)`);
-    console.log('👹 Enemies:', enemies.map(e => e.name).join(', '));
+    console.log('👹 Enemies:', enemies.map(e => e.definition.name).join(', '));
   };
 
   /**
@@ -116,6 +116,7 @@ export const CombatProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 /**
  * Hook para usar el contexto de combate
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export const useCombat = () => {
   const context = useContext(CombatContext);
   if (context === undefined) {

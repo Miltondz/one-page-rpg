@@ -11,7 +11,7 @@ function buildPlayerSummary(context: LLMContext): string {
   return [
     `${player.name}, nivel ${player.level} ${player.race} ${player.class}`,
     `Salud: ${healthPercent}% (${health}/${player.maxWounds})`,
-    `STR:${player.attributes.strength} AGI:${player.attributes.agility} INT:${player.attributes.intelligence}`,
+    `FUE:${player.attributes.FUE} AGI:${player.attributes.AGI} SAB:${player.attributes.SAB} SUE:${player.attributes.SUE}`,
     `Items: ${context.inventory.length} | Oro: ${player.gold}`,
   ].join(' | ');
 }
@@ -38,24 +38,6 @@ function buildRecentEventsSummary(context: LLMContext): string {
   
   const lastEvents = context.recentEvents.slice(-3);
   return 'Eventos recientes:\n' + lastEvents.map((e, i) => `${i + 1}. ${e}`).join('\n');
-}
-
-/**
- * Construye resumen del inventario
- */
-function buildInventorySummary(context: LLMContext): string {
-  if (context.inventory.length === 0) {
-    return 'Inventario vacío.';
-  }
-  
-  const itemNames = context.inventory.slice(0, 5).map(item => item.name).join(', ');
-  const remaining = context.inventory.length - 5;
-  
-  if (remaining > 0) {
-    return `Inventario: ${itemNames}, y ${remaining} más...`;
-  }
-  
-  return `Inventario: ${itemNames}`;
 }
 
 /**

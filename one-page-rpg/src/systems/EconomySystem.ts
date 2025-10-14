@@ -3,9 +3,9 @@
  */
 
 import type { Merchant, Transaction, TransactionResult } from '../types/merchant';
-import type { Item } from '../types';
 import type { GameCatalog } from '../types/catalog';
-import { ReputationSystem, type Reputation } from './ReputationSystem';
+import { ReputationSystem } from './ReputationSystem';
+import type { Reputation } from '../types';
 import type { NPCMemory } from './NPCMemorySystem';
 
 export class EconomySystem {
@@ -45,7 +45,7 @@ export class EconomySystem {
     // Aplicar modificadores de reputación usando ReputationSystem
     if (merchant.reputationDiscount?.faction) {
       const modifiers = this.reputationSystem.getPriceModifiers(
-        merchant.reputationDiscount.faction,
+        merchant.reputationDiscount.faction as any,
         factionReputation,
         npcMemory
       );
@@ -75,7 +75,7 @@ export class EconomySystem {
     // Aplicar modificadores de reputación usando ReputationSystem
     if (merchant.reputationDiscount?.faction) {
       const modifiers = this.reputationSystem.getPriceModifiers(
-        merchant.reputationDiscount.faction,
+        merchant.reputationDiscount.faction as any,
         factionReputation,
         npcMemory
       );
@@ -214,10 +214,18 @@ export class EconomySystem {
     const tempNPC = {
       id: merchantId,
       name: merchant.name,
+      archetype: 'merchant' as const,
+      race: 'human',
+      relationship: 0,
       location: merchant.location,
-      faction: merchant.reputationDiscount.faction,
+      mood: 'neutral' as const,
+      knowledge: [],
+      questsGiven: [],
+      interactions: [],
+      isAlive: true,
+      isMet: true,
+      faction: merchant.reputationDiscount.faction as any,
       role: 'merchant',
-      state: 'available' as const,
     };
 
     const attitude = this.reputationSystem.calculateNPCAttitude(

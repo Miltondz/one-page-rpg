@@ -13,16 +13,22 @@ export type Reputation = Record<FactionId, number>;
  */
 export interface WorldState {
   /** Seed único para reproducibilidad */
-  seed: string;
+  seed?: string;
 
   /** Fecha de creación del mundo */
-  createdAt: number;
+  createdAt?: number;
 
   /** Tiempo de juego total en minutos */
-  playTime: number;
+  playTime?: number;
+  
+  /** Tiempo transcurrido en el juego */
+  timeElapsed?: number;
 
   /** Reputación con cada facción */
-  reputation: Reputation;
+  reputation?: Reputation;
+  
+  /** Relaciones con facciones (alias) */
+  factionRelationships?: Record<string, number>;
 
   /** IDs de misiones completadas */
   completedQuests: string[];
@@ -47,6 +53,9 @@ export interface WorldState {
 
   /** Clima actual */
   weather: 'clear' | 'rain' | 'storm' | 'fog';
+
+  /** Estado anímico general del mundo */
+  mood?: 'dark' | 'neutral' | 'hopeful' | 'tense' | 'peaceful';
 
   /** Mundo actual (por ahora solo 'griswald') */
   currentWorld: string;

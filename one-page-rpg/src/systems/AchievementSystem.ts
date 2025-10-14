@@ -1,5 +1,5 @@
-import { GameState } from '../types/game';
-import { LLMService } from '../services/LLMService';
+import type { GameState } from '../types';
+import type { LLMService } from '../services/llm/LLMService';
 
 /**
  * Definición de un logro
@@ -264,14 +264,12 @@ export class AchievementSystem {
       } catch (error) {
         console.warn('Failed to generate achievement context:', error);
         achievement.contextDescription = this.generateProceduralContext(
-          achievement,
-          context
+          achievement
         );
       }
     } else {
       achievement.contextDescription = this.generateProceduralContext(
-        achievement,
-        context
+        achievement
       );
     }
     
@@ -299,10 +297,26 @@ export class AchievementSystem {
       `\nWrite a SHORT, celebratory message (1 sentence) describing this moment.`,
     ].join('\n');
     
-    const response = await this.llmService.generate(prompt, {
-      max_new_tokens: 60,
-      temperature: 0.8,
-    });
+    // Use generateNarrative with minimal context
+    let response = 'Achievement unlocked!'; // Default fallback
+    try {
+      const result = await this.llmService.generateNarrative({
+        context: {
+          player: { name: 'Player', level: 1, attributes: { FUE: 0, AGI: 0, SAB: 0, SUE: 0 } } as any,
+          location: { id: 'game', name: 'Game', description: prompt, type: 'city' },
+          recentEvents: [],
+          inventory: [],
+          worldState: {} as any,
+        },
+        type: 'character_thought',
+        maxLength: 60,
+        temperature: 0.8,
+      });
+      response = result.text;
+    } catch {
+      // Use fallback if LLM fails
+      response = 'Achievement unlocked!';
+    }
     
     return response.trim();
   }
@@ -311,8 +325,7 @@ export class AchievementSystem {
    * Genera descripción contextual procedural
    */
   private generateProceduralContext(
-    achievement: Achievement,
-    context: string
+    achievement: Achievement
   ): string {
     const templates: Record<Achievement['rarity'], string[]> = {
       common: [
@@ -481,22 +494,28 @@ export function registerDefaultCriteria(
   // First Blood
   system.registerCriteria({
     achievementId: 'first_blood',
-    check: (state) => (state.world.enemiesDefeated || 0) >= 1,
-    context: (state) => `Defeated first enemy in ${state.currentScene?.location || 'battle'}`,
+    check: (state) => {
+      const totalDefeated = Object.values(state.world?.enemiesDefeated || {}).reduce((a, b) => a + b, 0);
+      return totalDefeated >= 1;
+    },
+    context: () => `Defeated first enemy in battle`,
   });
   
   // Warrior
   system.registerCriteria({
     achievementId: 'warrior',
-    check: (state) => (state.world.enemiesDefeated || 0) >= 10,
-    context: (state) => `Achieved 10 enemy defeats`,
+    check: (state) => {
+      const totalDefeated = Object.values(state.world?.enemiesDefeated || {}).reduce((a, b) => a + b, 0);
+      return totalDefeated >= 10;
+    },
+    context: () => `Achieved 10 enemy defeats`,
   });
   
   // Explorer
   system.registerCriteria({
     achievementId: 'explorer',
-    check: (state) => (state.world.locationsVisited?.size || 0) >= 10,
-    context: (state) => `Explored 10 unique locations`,
+    check: (state) => (state.world?.discoveredLocations?.length || 0) >= 10,
+    context: () => `Explored 10 unique locations`,
   });
   
   // Level Up
@@ -516,8 +535,8 @@ export function registerDefaultCriteria(
   // Quest Master
   system.registerCriteria({
     achievementId: 'quest_master',
-    check: (state) => state.world.completedQuests.length >= 10,
-    context: (state) => `Completed 10th quest`,
+    check: (state) => (state.world?.completedQuests?.length || 0) >= 10,
+    context: () => `Completed 10th quest`,
   });
   
   // Wealthy

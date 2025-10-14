@@ -142,6 +142,20 @@ export class SeededRandom {
       die2,
     };
   }
+  
+  /**
+   * Alias para roll2d6() (compatibilidad)
+   */
+  roll(): { total: number; die1: number; die2: number } {
+    return this.roll2d6();
+  }
+  
+  /**
+   * Alias para pick() (compatibilidad)
+   */
+  choice<T>(array: T[]): T {
+    return this.pick(array);
+  }
 
   /**
    * Selecciona elementos ponderados según sus pesos

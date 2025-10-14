@@ -50,7 +50,7 @@ describe('NPCGenerator', () => {
       const gen2 = createNPCGenerator(rng2);
 
       const names1 = [];
-      const names2 = [];
+      const names2: string[] = [];
 
       for (let i = 0; i < 10; i++) {
         names1.push(gen1.generateName('male'));

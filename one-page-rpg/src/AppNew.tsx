@@ -5,7 +5,7 @@ import {
   MainMenu,
   CharacterCreation,
 } from './components';
-import { PlayerAttributes } from './types';
+import type { PlayerAttributes } from './types';
 import { GameProvider } from './context/GameContext';
 import GameScreen from './components/GameScreen';
 

@@ -5,8 +5,8 @@
  */
 
 import type { SeededRandom } from '../utils/SeededRandom';
-import type { Player } from '../types/Player';
-import type { WorldState } from '../types/World';
+// import type { Player } from '../types/player'; // TODO: Use for quest requirements
+// import type { WorldState } from '../types/world'; // TODO: Use for quest world effects
 
 /**
  * Tipos de misiones generables
@@ -167,7 +167,7 @@ export class QuestSystem {
     };
 
     // Generar objetivos basados en el tipo
-    const objectives = this.generateObjectives(questType, location, playerLevel);
+    const objectives = this.generateObjectives(questType, location);
 
     // Generar título descriptivo
     const title = this.generateQuestTitle(questType, location);
@@ -196,7 +196,7 @@ export class QuestSystem {
   /**
    * Genera objetivos para una misión
    */
-  private generateObjectives(type: QuestType, location: string, playerLevel: number): QuestObjective[] {
+  private generateObjectives(type: QuestType, location: string): QuestObjective[] {
     const objectives: QuestObjective[] = [];
 
     switch (type) {
@@ -224,7 +224,7 @@ export class QuestSystem {
         });
         break;
 
-      case 'combat':
+      case 'combat': {
         const enemyCount = this.rng.nextInt(2, 4);
         objectives.push({
           id: this.rng.uuid(),
@@ -239,6 +239,7 @@ export class QuestSystem {
           rewards: { xp: Math.max(1, Math.floor(enemyCount / 2)), gold: enemyCount * 5 },
         });
         break;
+      }
 
       case 'explore':
         objectives.push({
@@ -276,7 +277,7 @@ export class QuestSystem {
         });
         break;
 
-      case 'collect':
+      case 'collect': {
         const itemCount = this.rng.nextInt(3, 6);
         objectives.push({
           id: this.rng.uuid(),
@@ -291,6 +292,7 @@ export class QuestSystem {
           rewards: { xp: 2, gold: 10 },
         });
         break;
+      }
 
       case 'escort':
         objectives.push({

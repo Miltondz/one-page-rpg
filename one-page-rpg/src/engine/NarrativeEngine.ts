@@ -1,4 +1,4 @@
-import { Scene, Decision, GameState, PlayerState } from '../types';
+import type { Scene, Decision, PlayerState } from '../types';
 
 /**
  * Motor Narrativo - Procesa escenas y decisiones
@@ -12,11 +12,11 @@ import { Scene, Decision, GameState, PlayerState } from '../types';
 export class NarrativeEngine {
   private scenes: Map<string, Scene>;
   private currentScene: Scene | null = null;
-  private gameState: GameState;
+  // private gameState: GameState; // TODO: Use this for tracking state changes
 
-  constructor(scenesData: Record<string, Scene>, initialGameState: GameState) {
+  constructor(scenesData: Record<string, Scene>) {
     this.scenes = new Map(Object.entries(scenesData));
-    this.gameState = initialGameState;
+    // this.gameState = initialGameState; // TODO: Store for tracking
   }
 
   /**
@@ -50,7 +50,7 @@ export class NarrativeEngine {
   ): Promise<{
     success: boolean;
     nextSceneId: string | null;
-    consequences: any[];
+    consequences: Array<Record<string, unknown>>;
     requiresRoll?: boolean;
     rollResult?: {
       attribute: string;
@@ -61,7 +61,7 @@ export class NarrativeEngine {
       success: boolean;
     };
   }> {
-    const results: any[] = [];
+    const results: Array<Record<string, unknown>> = [];
     let success = true;
     let rollResult = undefined;
 
@@ -104,7 +104,7 @@ export class NarrativeEngine {
       // Verificar items
       if (req.items) {
         const hasAllItems = req.items.every((itemId) =>
-          playerState.inventory.some((item) => item.id === itemId)
+          playerState.inventory.some((item) => item === itemId)
         );
         if (!hasAllItems) {
           return {
@@ -126,7 +126,7 @@ export class NarrativeEngine {
 
     return {
       success,
-      nextSceneId: decision.nextSceneId,
+      nextSceneId: decision.nextSceneId ?? null,
       consequences: results,
       requiresRoll: !!rollResult,
       rollResult,
@@ -163,9 +163,9 @@ export class NarrativeEngine {
    * Aplicar una consecuencia
    */
   private async applyConsequence(
-    consequence: any,
+    consequence: Record<string, unknown>,
     playerState: PlayerState
-  ): Promise<any> {
+  ): Promise<Record<string, unknown>> {
     switch (consequence.type) {
       case 'damage':
         return this.applyDamage(consequence, playerState);
@@ -174,7 +174,7 @@ export class NarrativeEngine {
         return this.applyHealing(consequence, playerState);
 
       case 'add_item':
-        return this.addItem(consequence, playerState);
+        return this.addItem(consequence);
 
       case 'remove_item':
         return this.removeItem(consequence, playerState);
@@ -186,7 +186,7 @@ export class NarrativeEngine {
         return this.removeGold(consequence, playerState);
 
       case 'apply_status':
-        return this.applyStatus(consequence, playerState);
+        return this.applyStatus(consequence);
 
       case 'start_combat':
         return { type: 'start_combat', enemies: consequence.enemies };
@@ -213,8 +213,8 @@ export class NarrativeEngine {
     }
   }
 
-  private applyDamage(consequence: any, playerState: PlayerState) {
-    const amount = consequence.amount || 1;
+  private applyDamage(consequence: Record<string, unknown>, playerState: PlayerState) {
+    const amount = (consequence.amount as number) || 1;
     const damageType = consequence.damage_type || 'wounds';
 
     if (damageType === 'wounds') {
@@ -231,8 +231,8 @@ export class NarrativeEngine {
     };
   }
 
-  private applyHealing(consequence: any, playerState: PlayerState) {
-    const amount = consequence.amount || 1;
+  private applyHealing(consequence: Record<string, unknown>, playerState: PlayerState) {
+    const amount = (consequence.amount as number) || 1;
     const healType = consequence.heal_type || 'wounds';
 
     if (healType === 'wounds') {
@@ -251,7 +251,7 @@ export class NarrativeEngine {
     };
   }
 
-  private addItem(consequence: any, playerState: PlayerState) {
+  private addItem(consequence: Record<string, unknown>) {
     // TODO: Implementar lógica completa con límite de inventario
     return {
       type: 'add_item',
@@ -260,8 +260,8 @@ export class NarrativeEngine {
     };
   }
 
-  private removeItem(consequence: any, playerState: PlayerState) {
-    const index = playerState.inventory.findIndex((i) => i.id === consequence.item);
+  private removeItem(consequence: Record<string, unknown>, playerState: PlayerState) {
+    const index = playerState.inventory.findIndex((i) => i === consequence.item);
     if (index !== -1) {
       playerState.inventory.splice(index, 1);
     }
@@ -273,8 +273,8 @@ export class NarrativeEngine {
     };
   }
 
-  private addGold(consequence: any, playerState: PlayerState) {
-    const amount = consequence.amount || 0;
+  private addGold(consequence: Record<string, unknown>, playerState: PlayerState) {
+    const amount = (consequence.amount as number) || 0;
     playerState.gold += amount;
 
     return {
@@ -284,8 +284,8 @@ export class NarrativeEngine {
     };
   }
 
-  private removeGold(consequence: any, playerState: PlayerState) {
-    const amount = consequence.amount || 0;
+  private removeGold(consequence: Record<string, unknown>, playerState: PlayerState) {
+    const amount = (consequence.amount as number) || 0;
     playerState.gold = Math.max(0, playerState.gold - amount);
 
     return {
@@ -295,7 +295,7 @@ export class NarrativeEngine {
     };
   }
 
-  private applyStatus(consequence: any, playerState: PlayerState) {
+  private applyStatus(consequence: Record<string, unknown>) {
     // TODO: Implementar sistema completo de status effects
     return {
       type: 'apply_status',
@@ -329,7 +329,7 @@ export class NarrativeEngine {
     // Verificar items
     if (req.items) {
       const hasAllItems = req.items.every((itemId) =>
-        playerState.inventory.some((item) => item.id === itemId)
+        playerState.inventory.some((item) => item === itemId)
       );
       if (!hasAllItems) return false;
     }

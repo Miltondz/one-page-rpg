@@ -47,11 +47,11 @@ export const MainMenu: React.FC<MainMenuProps> = ({
         </div>
 
         {/* Main Menu */}
-        <RPGUIContainer variant="framed-golden">
+        <RPGUIContainer frameType="framed-golden">
           <div className="space-y-4">
             <RPGUIButton
               onClick={onNewGame}
-              variant="golden"
+              golden
               className="w-full text-lg py-4"
             >
               ⚔️ Nueva Partida
@@ -59,7 +59,6 @@ export const MainMenu: React.FC<MainMenuProps> = ({
 
             <RPGUIButton
               onClick={onLoadGame}
-              variant="normal"
               disabled={!hasSavedGame}
               className="w-full"
             >
@@ -71,7 +70,6 @@ export const MainMenu: React.FC<MainMenuProps> = ({
 
             <RPGUIButton
               onClick={onOptions}
-              variant="normal"
               className="w-full"
             >
               ⚙️ Opciones
@@ -80,14 +78,12 @@ export const MainMenu: React.FC<MainMenuProps> = ({
             <div className="grid grid-cols-2 gap-4 pt-4 border-t-2 border-gray-700">
               <RPGUIButton
                 onClick={() => setShowAbout(true)}
-                variant="normal"
                 className="text-sm"
               >
                 ℹ️ Acerca de
               </RPGUIButton>
               <RPGUIButton
                 onClick={() => setShowCredits(true)}
-                variant="normal"
                 className="text-sm"
               >
                 🎭 Créditos

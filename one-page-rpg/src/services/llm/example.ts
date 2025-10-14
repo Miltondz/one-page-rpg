@@ -7,9 +7,9 @@
 
 import { getLLMService } from './index';
 import { LLMNarrativeEngine } from '../../engine/LLMNarrativeEngine';
-import type { Player } from '../../types/Player';
-import type { WorldState } from '../../types/World';
-import type { Item } from '../../types/Item';
+import type { Player } from '../../types/player';
+import type { WorldState } from '../../types/world';
+import type { Item } from '../../types/item';
 import type { GameState, Scene } from '../../types';
 
 // ============================================================================
@@ -27,11 +27,14 @@ async function exampleBasicLLM() {
     name: 'Kael',
     level: 2,
     xp: 5,
+    experience: 5,
     xpToNextLevel: 10,
+    experienceToNextLevel: 10,
     attributes: {
-      strength: 3,
-      agility: 2,
-      intelligence: 1,
+      FUE: 3,
+      AGI: 2,
+      SAB: 1,
+      SUE: 0,
     },
     wounds: 2,
     maxWounds: 8,
@@ -117,8 +120,10 @@ async function exampleNarrativeEngine() {
     name: 'Kael',
     level: 2,
     xp: 5,
+    experience: 5,
     xpToNextLevel: 10,
-    attributes: { strength: 3, agility: 2, intelligence: 1 },
+    experienceToNextLevel: 10,
+    attributes: { FUE: 3, AGI: 2, SAB: 1, SUE: 0 },
     wounds: 2,
     maxWounds: 8,
     fatigue: 1,
@@ -130,31 +135,34 @@ async function exampleNarrativeEngine() {
     class: 'adventurer',
   };
   
+  const mockWorldState: WorldState = {
+    seed: 'example',
+    createdAt: Date.now(),
+    playTime: 30,
+    reputation: { casa_von_hess: 0, culto_silencio: 0, circulo_eco: 10 },
+    completedQuests: [],
+    unlockedAchievements: [],
+    globalFlags: {},
+    discoveredLocations: ['griswald'],
+    knownNPCs: ['elara'],
+    enemiesDefeated: { 'guardia_corrupto': 1 },
+    timeOfDay: 'night',
+    weather: 'fog',
+    currentWorld: 'griswald',
+    currentAct: 0,
+  };
+
   const mockGameState: GameState = {
     player: mockPlayer,
-    world: {
-      seed: 'example',
-      createdAt: Date.now(),
-      playTime: 30,
-      reputation: { casa_von_hess: 0, culto_silencio: 0, circulo_eco: 10 },
-      completedQuests: [],
-      unlockedAchievements: [],
-      globalFlags: {},
-      discoveredLocations: ['griswald'],
-      knownNPCs: ['elara'],
-      enemiesDefeated: { 'guardia_corrupto': 1 },
-      timeOfDay: 'night',
-      weather: 'fog',
-      currentWorld: 'griswald',
-      currentAct: 0,
-    },
-    currentScene: 'scene_01',
+    world: mockWorldState,
+    worldState: mockWorldState,
+    currentScene: 'scene_01' as unknown as Scene,
     currentLocation: 'griswald',
     activeQuests: [],
   };
   
   // Crear engine
-  const engine = new LLMNarrativeEngine(mockScenes, mockGameState);
+  const engine = new LLMNarrativeEngine(mockScenes);
   
   // Pre-cargar modelo (opcional, mejora UX)
   console.log('Pre-cargando modelo LLM...');
@@ -163,7 +171,7 @@ async function exampleNarrativeEngine() {
   
   // 1. Cargar escena enriquecida
   console.log('1. Cargando escena enriquecida...');
-  const { scene, enhancedDescription } = await engine.loadSceneEnhanced(
+  const { enhancedDescription } = await engine.loadSceneEnhanced(
     'scene_01',
     mockPlayer,
     mockGameState,
@@ -179,11 +187,7 @@ async function exampleNarrativeEngine() {
   // 2. Generar diálogo NPC
   console.log('2. Generando diálogo de NPC...');
   const dialogue = await engine.generateNPCDialogue(
-    'Elara',
-    'el misterioso eco robado',
-    mockPlayer,
-    mockGameState,
-    scene!
+    'scene_01'
   );
   console.log('Diálogo:');
   console.log(dialogue);
@@ -192,10 +196,7 @@ async function exampleNarrativeEngine() {
   // 3. Generar texto de combate
   console.log('3. Generando texto de combate...');
   const combatText = await engine.generateCombatFlavor(
-    'critical',
-    mockPlayer,
-    mockGameState,
-    'Guardia Corrupto'
+    'critical'
   );
   console.log('Combate:');
   console.log(combatText);
@@ -205,8 +206,6 @@ async function exampleNarrativeEngine() {
   console.log('4. Generando descubrimiento de item...');
   const itemText = await engine.generateItemDiscoveryText(
     'Llave Antigua',
-    mockPlayer,
-    mockGameState
   );
   console.log('Item:');
   console.log(itemText);
@@ -215,9 +214,6 @@ async function exampleNarrativeEngine() {
   // 5. Generar pensamiento del personaje
   console.log('5. Generando pensamiento del personaje...');
   const thought = await engine.generateCharacterThought(
-    'la extraña sensación de ser observado',
-    mockPlayer,
-    mockGameState
   );
   console.log('Pensamiento:');
   console.log(thought);
@@ -240,7 +236,7 @@ async function exampleComparison() {
     player: {
       name: 'Kael',
       level: 2,
-      attributes: { strength: 3, agility: 2, intelligence: 1 },
+      attributes: { FUE: 3, AGI: 2, SAB: 1, SUE: 0 },
       wounds: 2,
       maxWounds: 8,
       gold: 25,

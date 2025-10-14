@@ -16,43 +16,70 @@ export const GAME_STATE_VERSION = '1.0.0';
  */
 export interface GameState {
   /** Versión del esquema */
-  version: string;
+  version?: string;
 
   /** Seed único para reproducibilidad */
-  seed: string;
+  seed?: string;
 
   /** Jugador */
   player: Player;
+  
+  /** ID de la escena actual */
+  currentSceneId?: string;
+  
+  /** Locación actual */
+  currentLocation?: string;
 
   /** Estado del mundo */
   worldState: WorldState;
+  
+  /** Alias para worldState (compatibilidad) */
+  world?: WorldState;
 
   /** Escena actual */
-  currentScene: Scene;
+  currentScene?: Scene;
 
   /** Historial de eventos (para narrativa consistente) */
-  eventHistory: string[];
+  eventHistory?: string[];
+  
+  /** Log de eventos (alias de eventHistory) */
+  eventLog?: Array<{
+    type: string;
+    message: string;
+    timestamp: number;
+    result?: string;
+  }>;
 
+  /** Estados de misiones */
+  questStates?: Record<string, unknown>;
+  
   /** Misiones activas */
-  activeQuests: Quest[];
+  activeQuests?: Quest[];
 
   /** Misiones completadas */
-  completedQuests: Quest[];
+  completedQuests?: Quest[];
 
   /** NPCs conocidos con su estado actual */
-  npcs: Record<string, NPC>;
+  npcs?: Record<string, NPC>;
 
   /** Decisiones críticas tomadas */
-  resolvedDecisions: CriticalDecision[];
+  resolvedDecisions?: CriticalDecision[];
 
   /** Timestamp de creación */
-  createdAt: number;
+  createdAt?: number;
 
   /** Timestamp de última actualización */
-  updatedAt: number;
+  updatedAt?: number;
+  
+  /** Metadatos de guardado */
+  saveMetadata?: {
+    version: string;
+    timestamp: number;
+    playtime: number;
+  };
 
   /** Sesión actual (para estadísticas) */
-  sessionStats: {
+  sessionStats?: {
     /** Enemigos derrotados en esta sesión */
     enemiesDefeatedThisSession: number;
 
@@ -67,7 +94,7 @@ export interface GameState {
   };
 
   /** Configuración del juego */
-  config: {
+  config?: {
     /** Si el LLM está habilitado */
     llmEnabled: boolean;
 

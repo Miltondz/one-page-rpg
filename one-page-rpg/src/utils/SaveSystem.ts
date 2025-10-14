@@ -72,11 +72,11 @@ export class SaveSystem {
       // 1. Crear objeto de save
       const save: SerializedSave = {
         version: SAVE_VERSION,
-        seed: gameState.world.seed,
+        seed: gameState.world?.seed || '',
         timestamp: Date.now(),
         rngState: rng.getState(),
         gameState: {
-          player: this.serializePlayer(gameState.player),
+          player: this.serializePlayer(gameState.player) as any,
           world: gameState.world,
           currentScene: gameState.currentScene,
           currentLocation: gameState.currentLocation,
@@ -199,7 +199,9 @@ export class SaveSystem {
       name: player.name,
       level: player.level,
       xp: player.xp,
+      experience: player.experience,
       xpToNextLevel: player.xpToNextLevel,
+      experienceToNextLevel: player.experienceToNextLevel,
       attributes: player.attributes,
       wounds: player.wounds,
       maxWounds: player.maxWounds,
@@ -221,17 +223,19 @@ export class SaveSystem {
     seed: string
   ): GameState {
     // Valores por defecto si faltan
-    const defaultGameState: GameState = {
+    const defaultGameState: any = {
       player: {
         name: 'Aventurero',
         level: 1,
         xp: 0,
+        experience: 0,
         xpToNextLevel: 3,
+        experienceToNextLevel: 3,
         attributes: {
-          strength: 2,
-          agility: 2,
-          intelligence: 1,
-          luck: 1,
+          FUE: 2,
+          AGI: 2,
+          SAB: 1,
+          SUE: 1,
         },
         wounds: 3,
         maxWounds: 3,
@@ -263,17 +267,32 @@ export class SaveSystem {
         currentWorld: 'griswald',
         currentAct: 0,
       },
-      currentScene: 'intro',
+      currentScene: 'intro' as any,
       currentLocation: 'griswald',
       activeQuests: [],
     };
 
-    // Merge con partial
+    // Merge con partial, asegurando que completedQuests siempre sea un array
+    const mergedWorld = { 
+      ...defaultGameState.world, 
+      ...partial.world,
+      completedQuests: partial.world?.completedQuests || defaultGameState.world?.completedQuests || [],
+      unlockedAchievements: partial.world?.unlockedAchievements || defaultGameState.world?.unlockedAchievements || [],
+      globalFlags: partial.world?.globalFlags || defaultGameState.world?.globalFlags || {},
+      discoveredLocations: partial.world?.discoveredLocations || defaultGameState.world?.discoveredLocations || [],
+      knownNPCs: partial.world?.knownNPCs || defaultGameState.world?.knownNPCs || [],
+      enemiesDefeated: partial.world?.enemiesDefeated || defaultGameState.world?.enemiesDefeated || {},
+      timeOfDay: partial.world?.timeOfDay || defaultGameState.world?.timeOfDay || 'day',
+      weather: partial.world?.weather || defaultGameState.world?.weather || 'clear',
+      currentWorld: partial.world?.currentWorld || defaultGameState.world?.currentWorld || 'unknown',
+      currentAct: partial.world?.currentAct ?? defaultGameState.world?.currentAct ?? 0,
+    };
+
     return {
       ...defaultGameState,
       ...partial,
-      player: { ...defaultGameState.player, ...partial.player },
-      world: { ...defaultGameState.world, ...partial.world },
+      player: { ...defaultGameState.player, ...partial.player } as Player,
+      world: mergedWorld,
     };
   }
 
@@ -356,17 +375,19 @@ export class SaveSystem {
     const seed = generateRandomSeed();
     const rng = new SeededRandom(seed);
 
-    const gameState: GameState = {
+    const gameState: any = {
       player: {
         name: 'Aventurero',
         level: 1,
         xp: 0,
+        experience: 0,
         xpToNextLevel: 3,
+        experienceToNextLevel: 3,
         attributes: {
-          strength: 2,
-          agility: 2,
-          intelligence: 1,
-          luck: 1,
+          FUE: 2,
+          AGI: 2,
+          SAB: 1,
+          SUE: 1,
         },
         wounds: 3,
         maxWounds: 3,
@@ -398,7 +419,7 @@ export class SaveSystem {
         currentWorld: 'griswald',
         currentAct: 0,
       },
-      currentScene: 'intro',
+      currentScene: 'intro' as any,
       currentLocation: 'griswald',
       activeQuests: [],
     };
@@ -428,11 +449,11 @@ export class SaveSystem {
   static exportAsJSON(gameState: GameState, rng: SeededRandom): string {
     const save: SerializedSave = {
       version: SAVE_VERSION,
-      seed: gameState.world.seed,
+      seed: gameState.world?.seed || '',
       timestamp: Date.now(),
       rngState: rng.getState(),
       gameState: {
-        player: this.serializePlayer(gameState.player),
+        player: this.serializePlayer(gameState.player) as any,
         world: gameState.world,
         currentScene: gameState.currentScene,
         currentLocation: gameState.currentLocation,

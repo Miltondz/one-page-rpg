@@ -36,7 +36,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
   useEffect(() => {
     if (!gameState) {
       console.log('Initializing game...', { playerName, playerAttributes });
-      initializeGame(playerName, playerAttributes);
+      initializeGame(playerName, playerAttributes as any);
     }
   }, [playerName, playerAttributes, gameState, initializeGame]);
 

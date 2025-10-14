@@ -11,7 +11,7 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import type { Player, Item, InventoryItem, ItemType } from '../types';
+import type { Player, Item, ItemType } from '../types';
 
 interface InventoryViewProps {
   /** Jugador con su inventario */
@@ -87,10 +87,10 @@ export const InventoryView: React.FC<InventoryViewProps> = ({
   const calculatedStats = useMemo(() => {
     // TODO: Calcular bonos de equipo
     return {
-      baseStr: player.attributes.strength || 0,
-      baseAgi: player.attributes.agility || 0,
-      baseInt: player.attributes.intelligence || 0,
-      baseLuck: player.attributes.luck || 0,
+      baseStr: player.attributes.FUE || 0,
+      baseAgi: player.attributes.AGI || 0,
+      baseInt: player.attributes.SAB || 0,
+      baseLuck: player.attributes.SUE || 0,
       bonusStr: 0,
       bonusAgi: 0,
       bonusInt: 0,

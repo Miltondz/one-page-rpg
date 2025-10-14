@@ -1,4 +1,4 @@
-import type { GameState } from '../types/gameState';
+// NPC Memory System - tracks player interactions with NPCs
 import type { NPC } from '../types/npc';
 
 /**

@@ -131,11 +131,11 @@ export class PromptConfigService {
     }
     
     const parts = path.split('.');
-    let current: any = this.config;
+    let current: unknown = this.config;
     
     for (const part of parts) {
       if (current && typeof current === 'object' && part in current) {
-        current = current[part];
+        current = (current as any)[part];
       } else {
         console.warn(`Template not found: ${path}`);
         return null;
@@ -150,7 +150,7 @@ export class PromptConfigService {
    */
   buildPrompt(
     templatePath: string,
-    variables: Record<string, any>,
+    variables: Record<string, unknown>,
     conditionalFlags?: Record<string, boolean>
   ): BuiltPrompt | null {
     const template = this.getTemplate(templatePath);
@@ -395,7 +395,7 @@ export class PromptConfigService {
    */
   validateVariables(
     templatePath: string,
-    providedVariables: Record<string, any>
+    providedVariables: Record<string, unknown>
   ): { valid: boolean; missing: string[] } {
     const template = this.getTemplate(templatePath);
     if (!template) {
@@ -422,7 +422,7 @@ export class PromptConfigService {
     
     const templates: string[] = [];
     
-    const traverse = (obj: any, path: string = '') => {
+    const traverse = (obj: Record<string, unknown>, path: string = '') => {
       for (const key in obj) {
         const value = obj[key];
         const currentPath = path ? `${path}.${key}` : key;
@@ -431,13 +431,13 @@ export class PromptConfigService {
           if ('template' in value && 'variables' in value) {
             templates.push(currentPath);
           } else {
-            traverse(value, currentPath);
+            traverse(value as Record<string, unknown>, currentPath);
           }
         }
       }
     };
     
-    traverse(this.config);
+    traverse(this.config as unknown as Record<string, unknown>);
     return templates;
   }
   
@@ -447,7 +447,7 @@ export class PromptConfigService {
    */
   buildDynamicPrompt(
     instruction: string,
-    context: Record<string, any>,
+    context: Record<string, unknown>,
     options?: {
       includeSystemContext?: boolean;
       includeConstraints?: boolean;
@@ -517,7 +517,7 @@ export class PromptConfigService {
    */
   buildHybridPrompt(
     templatePath: string,
-    variables: Record<string, any>,
+    variables: Record<string, unknown>,
     additionalContext?: string,
     conditionalFlags?: Record<string, boolean>
   ): BuiltPrompt | null {

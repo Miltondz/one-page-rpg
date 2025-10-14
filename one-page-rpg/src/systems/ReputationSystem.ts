@@ -1,6 +1,6 @@
 import type { FactionId, Reputation } from '../types/world';
 import type { NPC } from '../types/npc';
-import { NPCMemory } from './NPCMemorySystem';
+import type { NPCMemory } from './NPCMemorySystem';
 
 /**
  * Actitud de un NPC basada en reputación

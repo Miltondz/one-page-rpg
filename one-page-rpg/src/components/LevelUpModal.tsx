@@ -6,10 +6,9 @@
 
 import React, { useState } from 'react';
 import Modal from './Modal';
-import type { Player } from '../types/Player';
+import type { Player } from '../types/player';
 import type { Attributes } from '../types/attributes';
 import type { LevelUpReward } from '../systems/ProgressionSystem';
-import { ProgressionSystem } from '../systems/ProgressionSystem';
 import './LevelUpModal.css';
 
 interface LevelUpModalProps {
@@ -121,10 +120,10 @@ const LevelUpModal: React.FC<LevelUpModalProps> = ({
    */
   const getAttributeName = (attr: keyof Attributes): string => {
     const names: Record<keyof Attributes, string> = {
-      strength: 'FUERZA',
-      agility: 'AGILIDAD',
-      intelligence: 'SABIDURÍA',
-      luck: 'SUERTE',
+      FUE: 'FUERZA',
+      AGI: 'AGILIDAD',
+      SAB: 'SABIDURÍA',
+      SUE: 'SUERTE',
     };
     return names[attr];
   };
@@ -134,10 +133,10 @@ const LevelUpModal: React.FC<LevelUpModalProps> = ({
    */
   const getAttributeIcon = (attr: keyof Attributes): string => {
     const icons: Record<keyof Attributes, string> = {
-      strength: '⚔️',
-      agility: '⚡',
-      intelligence: '📖',
-      luck: '🍀',
+      FUE: '⚔️',
+      AGI: '⚡',
+      SAB: '📖',
+      SUE: '🍀',
     };
     return icons[attr];
   };

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useCombat } from '../context/CombatContext';
-import { RPGUIContainer, RPGUIButton, RPGUIProgressBar } from '../ui';
+import { RPGUIContainer, RPGUIButton, RPGUIProgress } from '../ui';
 
 /**
  * Pantalla de combate por turnos
@@ -20,7 +20,7 @@ export const CombatScreen: React.FC = () => {
         setShowRewards(true);
       }
     }
-  }, [combatState?.phase]);
+  }, [combatState, endCombat]);
 
   if (!isInCombat || !combatState) {
     return null;
@@ -33,7 +33,7 @@ export const CombatScreen: React.FC = () => {
   if (showRewards && rewards) {
     return (
       <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4">
-        <RPGUIContainer variant="framed-golden" className="max-w-2xl w-full">
+        <RPGUIContainer frameType="framed-golden" className="max-w-2xl w-full">
           <div className="text-center space-y-6">
             <div className="text-8xl mb-4">🏆</div>
             <h2 className="text-yellow-400 text-3xl font-bold">¡VICTORIA!</h2>
@@ -65,7 +65,7 @@ export const CombatScreen: React.FC = () => {
               )}
             </div>
 
-            <RPGUIButton onClick={() => window.location.reload()} variant="golden">
+            <RPGUIButton onClick={() => window.location.reload()} golden>
               Continuar →
             </RPGUIButton>
           </div>
@@ -78,7 +78,7 @@ export const CombatScreen: React.FC = () => {
   if (phase === 'defeat') {
     return (
       <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4">
-        <RPGUIContainer variant="framed" className="max-w-2xl w-full">
+        <RPGUIContainer frameType="framed" className="max-w-2xl w-full">
           <div className="text-center space-y-6">
             <div className="text-8xl mb-4">💀</div>
             <h2 className="text-red-400 text-3xl font-bold">Has sido derrotado...</h2>
@@ -88,7 +88,7 @@ export const CombatScreen: React.FC = () => {
             </p>
 
             <div className="flex gap-4 justify-center">
-              <RPGUIButton onClick={() => window.location.reload()} variant="normal">
+              <RPGUIButton onClick={() => window.location.reload()}>
                 Volver al Menú
               </RPGUIButton>
             </div>
@@ -113,7 +113,7 @@ export const CombatScreen: React.FC = () => {
           
           {/* Panel del Jugador */}
           <div className="lg:col-span-1">
-            <RPGUIContainer variant="framed-golden">
+            <RPGUIContainer frameType="framed-golden">
               <h3 className="text-yellow-400 text-lg mb-4 border-b-2 border-yellow-600 pb-2">
                 👤 {player.name}
               </h3>
@@ -124,11 +124,9 @@ export const CombatScreen: React.FC = () => {
                   <span className="text-gray-300">HP</span>
                   <span className="text-white">{player.wounds} / {player.maxWounds}</span>
                 </div>
-                <RPGUIProgressBar
-                  value={player.wounds}
-                  max={player.maxWounds}
-                  variant="health"
-                  showLabel={false}
+                <RPGUIProgress
+                  value={player.wounds / player.maxWounds}
+                  color="red"
                 />
               </div>
 
@@ -138,11 +136,9 @@ export const CombatScreen: React.FC = () => {
                   <span className="text-gray-300">MP</span>
                   <span className="text-white">{player.fatigue} / {player.maxFatigue}</span>
                 </div>
-                <RPGUIProgressBar
-                  value={player.fatigue}
-                  max={player.maxFatigue}
-                  variant="mana"
-                  showLabel={false}
+                <RPGUIProgress
+                  value={player.fatigue / player.maxFatigue}
+                  color="blue"
                 />
               </div>
 
@@ -172,7 +168,7 @@ export const CombatScreen: React.FC = () => {
           <div className="lg:col-span-2 space-y-4">
             
             {/* Enemigos */}
-            <RPGUIContainer variant="framed">
+            <RPGUIContainer frameType="framed">
               <h3 className="text-red-400 text-lg mb-4 border-b-2 border-red-600 pb-2">
                 👹 Enemigos
               </h3>
@@ -228,7 +224,7 @@ export const CombatScreen: React.FC = () => {
 
             {/* Acciones del Jugador */}
             {phase === 'player' && (
-              <RPGUIContainer variant="framed-golden">
+              <RPGUIContainer frameType="framed-golden">
                 <h3 className="text-yellow-400 text-lg mb-4 border-b-2 border-yellow-600 pb-2">
                   ⚔️ Tus Acciones
                 </h3>
@@ -242,7 +238,6 @@ export const CombatScreen: React.FC = () => {
                         attribute: 'FUE',
                       })
                     }
-                    variant="normal"
                     disabled={aliveEnemies.length === 0}
                   >
                     💪 Ataque FUE
@@ -256,7 +251,6 @@ export const CombatScreen: React.FC = () => {
                         attribute: 'AGI',
                       })
                     }
-                    variant="normal"
                     disabled={aliveEnemies.length === 0}
                   >
                     🏹 Ataque AGI
@@ -264,14 +258,12 @@ export const CombatScreen: React.FC = () => {
 
                   <RPGUIButton
                     onClick={() => executePlayerAction({ type: 'defend' })}
-                    variant="normal"
                   >
                     🛡️ Defender
                   </RPGUIButton>
 
                   <RPGUIButton
                     onClick={() => executePlayerAction({ type: 'flee' })}
-                    variant="normal"
                   >
                     🏃 Huir
                   </RPGUIButton>
@@ -294,7 +286,7 @@ export const CombatScreen: React.FC = () => {
         </div>
 
         {/* Combat Log */}
-        <RPGUIContainer variant="framed" className="max-h-48 overflow-y-auto custom-scrollbar">
+        <RPGUIContainer frameType="framed" className="max-h-48 overflow-y-auto custom-scrollbar">
           <h3 className="text-gray-400 text-sm mb-2 border-b border-gray-700 pb-1">
             📋 Log de Combate
           </h3>

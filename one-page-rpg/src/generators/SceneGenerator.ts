@@ -74,8 +74,11 @@ const CHALLENGE_TABLE: Record<number, { type: string; description: string; diffi
 
 /**
  * Tabla de consecuencias (2d6)
+ * TODO: Implementar uso de esta tabla en generación de escenas
  */
-const CONSEQUENCE_TABLE: Record<number, { positive: string; negative: string }> = {
+// Tabla de consecuencias (no usada actualmente pero reservada para futuro)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/naming-convention
+const __CONSEQUENCE_TABLE: Record<number, { positive: string; negative: string }> = {
   2: { positive: 'Encuentras un item legendario', negative: 'Pierdes un item valioso' },
   3: { positive: 'Ganas +3 oro', negative: 'Recibes 2 heridas' },
   4: { positive: 'Obtienes información valiosa', negative: 'Te engañan con información falsa' },
@@ -386,7 +389,7 @@ export class SceneGenerator {
       if (scenes.length > 0) {
         const previousScene = scenes[scenes.length - 1];
         // La primera decisión de la escena anterior lleva a esta
-        if (previousScene.decisions.length > 0) {
+        if (previousScene.decisions && previousScene.decisions.length > 0) {
           previousScene.decisions[0].nextSceneId = scene.id;
         }
       }

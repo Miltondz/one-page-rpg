@@ -296,7 +296,7 @@ export class DiceSystem {
    * Helper para skills checks comunes
    */
   skillCheck(
-    skill: AttributeType,
+    _skill: AttributeType,
     attributeValue: number,
     difficulty: DifficultyLevel = 'normal',
     advantageType: AdvantageType = 'none'

@@ -6,6 +6,69 @@ import type { AttributeType } from './attributes';
 export type SceneType = 'combat' | 'exploration' | 'dialogue' | 'rest' | 'decision';
 
 /**
+ * Requerimientos para una decisión
+ */
+export interface DecisionRequirements {
+  /** Atributo requerido para tirada */
+  attribute?: string;
+  
+  /** Dificultad de la tirada */
+  difficulty?: number;
+  
+  /** Oro requerido */
+  gold?: number;
+  
+  /** Items requeridos */
+  items?: string[];
+  
+  /** Flags requeridos */
+  flags?: Record<string, boolean | string | number>;
+  
+  /** Escena alternativa si falla la tirada */
+  failureSceneId?: string;
+}
+
+/**
+ * Consecuencia de una decisión
+ */
+export interface DecisionConsequence {
+  /** Tipo de consecuencia */
+  type: string;
+  
+  /** Datos adicionales según el tipo */
+  [key: string]: unknown;
+}
+
+/**
+ * Decisión disponible en una escena
+ * (Diferentes de CriticalDecision que son decisiones de trama principal)
+ */
+export interface Decision {
+  /** ID único de la decisión */
+  id: string;
+  
+  /** Texto que ve el jugador */
+  text: string;
+  
+  /** ID de la siguiente escena (next_scene en JSON, nextScene en código) */
+  next_scene?: string;
+  nextScene?: string;
+  nextSceneId?: string | null;
+  
+  /** Requerimientos para esta decisión */
+  requirements?: DecisionRequirements;
+  
+  /** Consecuencias al elegir esta decisión */
+  consequences?: DecisionConsequence[];
+  
+  /** Condiciones para que aparezca esta decisión */
+  conditions?: Record<string, unknown>;
+  
+  /** Descripción adicional */
+  description?: string;
+}
+
+/**
  * Tipo de encuentro
  */
 export type EncounterType = 
@@ -79,27 +142,57 @@ export interface Scene {
   /** ID único de la escena */
   id: string;
 
+  /** Título de la escena */
+  title?: string;
+
   /** Tipo de escena */
-  type: SceneType;
+  type?: SceneType;
 
   /** ID de la localización */
-  locationId: string;
+  locationId?: string;
+  
+  /** Locación (alias de locationId para compatibilidad con JSON) */
+  location?: string;
 
   /** Nombre de la localización */
-  locationName: string;
+  locationName?: string;
 
   /** Descripción narrativa de la escena */
-  narrative: string;
+  narrative?: string;
+  
+  /** Descripción alternativa */
+  description?: string;
 
   /** Encuentro principal de la escena */
   encounter?: Encounter;
 
   /** Acciones disponibles para el jugador */
-  availableActions: SceneAction[];
+  availableActions?: SceneAction[];
+  
+  /** Decisiones disponibles en esta escena (usado en escenas narrativas) */
+  decisions?: Decision[];
+  
+  /** NPCs presentes en la escena */
+  npcs_present?: string[];
+  
+  /** Enemigos presentes */
+  enemies?: string[];
+  
+  /** Items recibidos al entrar a esta escena */
+  items_received?: string[];
+  
+  /** Atmósfera de la escena */
+  atmosphere?: string;
+  
+  /** Mood musical */
+  music_mood?: string;
+  
+  /** Tags de la escena */
+  tags?: string[];
 
   /** Si la escena fue generada por LLM */
-  useLLM: boolean;
+  useLLM?: boolean;
 
   /** Timestamp de cuando se generó */
-  generatedAt: number;
+  generatedAt?: number;
 }
