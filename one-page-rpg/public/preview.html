@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>One Page RPG - La Deuda del Ladrón de Ecos</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#8B5CF6",
+            "background-dark": "#1a1718",
+            "panel-bg": "#2d2627",
+            "panel-border": "#554c4d",
+            "text-main": "#e5e0e1",
+            "text-muted": "#928587",
+            "hp-bar": "#dc2626",
+            "mp-bar": "#2563eb",
+            "exp-bar": "#f59e0b",
+          },
+          fontFamily: {
+            display: ["'Press Start 2P'", "cursive"],
+          },
+          borderRadius: {
+            DEFAULT: "0",
+          },
+          borderWidth: {
+            DEFAULT: "2px",
+            '3': '3px',
+            '4': '4px',
+          },
+          boxShadow: {
+            'pixel': '4px 4px 0px 0px rgba(0,0,0,0.6)',
+            'pixel-inset': 'inset 2px 2px 0px 0px rgba(0,0,0,0.3)',
+          }
+        },
+      },
+    };
+  </script>
+<style>
+    body {
+      font-family: 'Press Start 2P', cursive;
+      background-color: #1a1718;
+      color: #e5e0e1;
+      font-size: 10px;
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+    }
+    .scanline-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%),
+        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+      background-size: 100% 2px, 3px 100%;
+      z-index: 9999;
+      opacity: 0.6;
+    }
+    .pixel-border {
+      border: 3px solid #554c4d;
+      box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.6);
+    }
+    .pixel-border-inset {
+       border: 2px solid #1a1718;
+       box-shadow: inset 2px 2px 0px 0px rgba(0,0,0,0.3);
+    }
+    .game-container-wrapper {
+      max-width: 1200px;
+      margin: auto;
+    }
+    .text-shadow {
+      text-shadow: 2px 2px 0px #1a1718;
+    }
+    .command-input::placeholder {
+        color: #928587;
+        opacity: 1;
+    }
+    .narrative-text {
+      line-height: 1.8;
+      letter-spacing: 0.02em;
+    }
+    .choice-button {
+      transition: all 0.1s ease;
+    }
+    .choice-button:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 0.8);
+    }
+    .choice-button:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.4);
+    }
+  </style>
+</head>
+<body class="bg-background-dark font-display">
+<div class="scanline-overlay"></div>
+<div class="game-container-wrapper">
+<div class="relative flex h-auto min-h-screen w-full flex-col pb-28">
+<div class="layout-container flex h-full grow flex-col">
+<div class="flex-1">
+
+<!-- HEADER -->
+<header class="flex items-center justify-between whitespace-nowrap border-b-4 border-panel-border bg-panel-bg px-4 py-3">
+<div class="flex items-center gap-3">
+<div class="size-10 text-primary">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M24 4L6 40h36L24 4z" fill="currentColor" stroke="currentColor" stroke-width="2"/>
+<circle cx="24" cy="30" r="2" fill="#1a1718"/>
+</svg>
+</div>
+<div>
+<h2 class="text-text-main text-base text-shadow">One Page RPG</h2>
+<p class="text-text-muted text-xs">Griswald Chronicles</p>
+</div>
+</div>
+<div class="flex items-center gap-4 text-xs">
+<!-- HP Bar -->
+<div class="flex items-center gap-2">
+<p class="text-shadow text-text-main">HP:</p>
+<div class="w-28 h-4 bg-black/50 pixel-border-inset relative">
+<div class="h-full bg-hp-bar transition-all duration-300" style="width: 100%;"></div>
+<span class="absolute inset-0 flex items-center justify-center text-white text-shadow">3/3</span>
+</div>
+</div>
+<!-- MP Bar -->
+<div class="flex items-center gap-2">
+<p class="text-shadow text-text-main">MP:</p>
+<div class="w-28 h-4 bg-black/50 pixel-border-inset relative">
+<div class="h-full bg-mp-bar transition-all duration-300" style="width: 100%;"></div>
+<span class="absolute inset-0 flex items-center justify-center text-white text-shadow">3/3</span>
+</div>
+</div>
+<!-- XP Bar -->
+<div class="flex items-center gap-2">
+<p class="text-shadow text-text-main">XP:</p>
+<div class="w-28 h-4 bg-black/50 pixel-border-inset relative">
+<div class="h-full bg-exp-bar transition-all duration-300" style="width: 0%;"></div>
+<span class="absolute inset-0 flex items-center justify-center text-white text-shadow">0/3</span>
+</div>
+</div>
+</div>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="grid grid-cols-4 gap-4 p-4">
+
+<!-- LEFT SIDEBAR - Character & Quest Log -->
+<div class="col-span-1 space-y-4">
+<!-- Character Panel -->
+<div class="bg-panel-bg p-3 pixel-border">
+<div class="flex flex-col items-center">
+<div class="bg-panel-border aspect-square h-32 w-32 mb-3 border-3 border-black flex items-center justify-center">
+<span class="text-6xl">🗡️</span>
+</div>
+<p class="text-text-main text-sm text-shadow">Aventurero</p>
+<p class="text-text-muted text-xs">Nivel 1</p>
+</div>
+<div class="mt-4 space-y-1 text-xs">
+<div class="flex justify-between"><span class="text-text-main">FUE:</span> <span class="text-primary font-bold">0</span></div>
+<div class="flex justify-between"><span class="text-text-main">AGI:</span> <span class="text-primary font-bold">0</span></div>
+<div class="flex justify-between"><span class="text-text-main">SAB:</span> <span class="text-primary font-bold">0</span></div>
+<div class="flex justify-between"><span class="text-text-main">SUE:</span> <span class="text-primary font-bold">0</span></div>
+</div>
+</div>
+
+<!-- Quest Log -->
+<div class="bg-panel-bg p-3 pixel-border">
+<h3 class="text-text-main text-sm text-shadow mb-2 border-b-2 border-panel-border pb-1">📜 Quest Log</h3>
+<ul class="space-y-2 text-text-muted text-xs max-h-48 overflow-y-auto">
+<li class="text-yellow-400">⚡ [Activa]</li>
+<li class="text-text-main">La Deuda del Ladrón de Ecos</li>
+<li class="text-xs">- Entregar la caja sellada al ermitaño</li>
+<li class="text-xs text-gray-600 mt-2">Objetivos: 0/6</li>
+</ul>
+</div>
+
+<!-- Location Info -->
+<div class="bg-panel-bg p-3 pixel-border">
+<h3 class="text-text-main text-sm text-shadow mb-2 border-b-2 border-panel-border pb-1">📍 Ubicación</h3>
+<p class="text-text-main text-xs">Murogris</p>
+<p class="text-text-muted text-xs mt-1">La Guarida de Alenko</p>
+<div class="mt-2 text-xs text-yellow-600">
+<p>⚠️ Atmósfera: Tensa</p>
+</div>
+</div>
+</div>
+
+<!-- CENTER - Scene Display -->
+<div class="col-span-2 space-y-4">
+<!-- Scene Image -->
+<div class="w-full bg-panel-border flex items-center justify-center overflow-hidden pixel-border h-64 relative">
+<div class="absolute inset-0 bg-gradient-to-b from-gray-900 to-gray-700"></div>
+<div class="relative z-10 text-center">
+<p class="text-8xl mb-4">🏚️</p>
+<p class="text-text-main text-sm text-shadow">Murogris - La Guarida</p>
+</div>
+</div>
+
+<!-- Narrative Text -->
+<div class="bg-panel-bg p-4 pixel-border min-h-80 max-h-80 overflow-y-auto">
+<h3 class="text-primary text-sm text-shadow mb-3 border-b-2 border-panel-border pb-2">
+  Escena 01: La Deuda
+</h3>
+<p class="text-text-main text-xs leading-relaxed narrative-text">
+El almacén apesta a pescado podrido y cerveza rancia. Dos figuras te bloquean la salida: <span class="text-red-400">Grol</span>, un matón del tamaño de un oso, y <span class="text-red-400">Finch</span>, nervioso como una rata acorralada. Ambos trabajan para <span class="text-primary">'La Rata' Alenko</span>, el hombre al que le debes más de lo que puedes pagar.
+<br/><br/>
+Alenko está sentado detrás de un escritorio manchado, contando monedas de cobre con dedos largos y huesudos. Cuando levanta la vista, sus ojos te evalúan como si fueras carne en un mercado.
+<br/><br/>
+<span class="text-yellow-400">"Has estado evitándome"</span>, dice con voz suave. <span class="text-yellow-400">"Eso no es inteligente. Pero tengo una propuesta que podría borrar tu deuda... si tienes agallas."</span>
+</p>
+</div>
+
+<!-- Choices -->
+<div class="bg-panel-bg p-4 pixel-border space-y-3">
+<h3 class="text-text-main text-sm text-shadow mb-3 border-b-2 border-panel-border pb-2">
+  ¿Qué haces?
+</h3>
+<button class="w-full bg-primary/20 hover:bg-primary/40 text-text-main text-xs p-3 pixel-border choice-button text-left">
+  <span class="text-primary">→</span> Escuchar la propuesta de Alenko
+</button>
+<button class="w-full bg-primary/20 hover:bg-primary/40 text-text-main text-xs p-3 pixel-border choice-button text-left">
+  <span class="text-yellow-400">→</span> Rechazar el trabajo e intentar negociar <span class="text-text-muted">(SAB 8)</span>
+</button>
+<button class="w-full bg-red-900/20 hover:bg-red-900/40 text-text-main text-xs p-3 pixel-border choice-button text-left">
+  <span class="text-red-400">⚔</span> Atacar a Alenko ahora <span class="text-red-400">(¡PELIGROSO!)</span>
+</button>
+</div>
+</div>
+
+<!-- RIGHT SIDEBAR - Inventory & Stats -->
+<div class="col-span-1">
+<!-- Inventory -->
+<div class="bg-panel-bg p-3 pixel-border h-full">
+<h3 class="text-text-main text-sm text-shadow mb-3 border-b-2 border-panel-border pb-1">🎒 Inventario</h3>
+<div class="grid grid-cols-3 gap-2 mb-4">
+<!-- Empty slots -->
+<div class="aspect-square bg-black/20 pixel-border-inset flex items-center justify-center text-2xl">
+  
+</div>
+<div class="aspect-square bg-black/20 pixel-border-inset"></div>
+<div class="aspect-square bg-black/20 pixel-border-inset"></div>
+<div class="aspect-square bg-black/20 pixel-border-inset"></div>
+<div class="aspect-square bg-black/20 pixel-border-inset"></div>
+<div class="aspect-square bg-black/20 pixel-border-inset"></div>
+<div class="aspect-square bg-black/20 pixel-border-inset"></div>
+<div class="aspect-square bg-black/20 pixel-border-inset"></div>
+<div class="aspect-square bg-black/20 pixel-border-inset"></div>
+</div>
+<p class="text-text-muted text-xs text-center">Oro: 0 🪙</p>
+
+<!-- Combat Log -->
+<div class="mt-4 pt-4 border-t-2 border-panel-border">
+<h3 class="text-text-main text-sm text-shadow mb-2">📋 Log de Eventos</h3>
+<div class="space-y-1 text-xs max-h-32 overflow-y-auto">
+<p class="text-green-400">> Juego iniciado</p>
+<p class="text-text-muted">> Ubicación: Murogris</p>
+<p class="text-yellow-400">> Quest iniciada: La Deuda del Ladrón de Ecos</p>
+</div>
+</div>
+
+<!-- NPCs Present -->
+<div class="mt-4 pt-4 border-t-2 border-panel-border">
+<h3 class="text-text-main text-sm text-shadow mb-2">👥 Presentes</h3>
+<div class="space-y-1 text-xs">
+<p class="text-primary">• 'La Rata' Alenko</p>
+<p class="text-red-400">• Grol (matón)</p>
+<p class="text-red-400">• Finch (matón)</p>
+</div>
+</div>
+</div>
+</div>
+
+</main>
+</div>
+</div>
+
+<!-- FIXED BOTTOM COMMAND BAR -->
+<div class="fixed bottom-0 left-0 right-0 w-full">
+<div class="game-container-wrapper">
+<div class="px-4 pb-4">
+<div class="relative">
+<input 
+  class="command-input w-full bg-panel-bg text-text-main text-xs p-3 pl-4 pr-12 pixel-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-shadow placeholder-text-muted" 
+  placeholder="Próximamente: Comandos de texto..." 
+  type="text"
+  disabled
+/>
+<button class="absolute inset-y-0 right-0 flex items-center px-4 text-text-muted hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">send</span>
+</button>
+</div>
+</div>
+
+<!-- FOOTER -->
+<footer class="border-t-4 border-panel-border px-4 py-2 bg-panel-bg flex justify-between items-center text-xs text-text-muted">
+<p>One Page RPG v0.1.0 - Prólogo Demo</p>
+<div class="flex gap-3">
+<button class="hover:text-primary transition-colors" disabled>💾 Guardar</button>
+<button class="hover:text-primary transition-colors" disabled>📂 Cargar</button>
+<button class="hover:text-primary transition-colors" disabled>⚙️ Opciones</button>
+</div>
+</footer>
+</div>
+</div>
+
+</div>
+</div>
+
+<script>
+// Placeholder para funcionalidad futura
+console.log('One Page RPG - Sistema cargado');
+console.log('Prólogo: La Deuda del Ladrón de Ecos');
+console.log('Estado: Demo visual - Funcionalidad en desarrollo');
+</script>
+
+</body>
+</html>
